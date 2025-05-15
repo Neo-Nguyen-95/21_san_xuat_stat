@@ -31,7 +31,7 @@ def transform_excel_to_stat(datapath):
     df = pd.read_excel(datapath, sheet_name=0, header=2)
     
     # Remove rows where "Kĩ năng" is missing (if any)
-    df = df[~df['Kĩ năng'].isnull()]
+    df['Kĩ năng'] = df['Kĩ năng'].fillna("Bỏ trống")
     
     # Group by "Kĩ năng" and "Độ khó" and count occurrences
     summary = df.groupby(['Kĩ năng', 'Độ khó']).size().unstack(fill_value=0)
