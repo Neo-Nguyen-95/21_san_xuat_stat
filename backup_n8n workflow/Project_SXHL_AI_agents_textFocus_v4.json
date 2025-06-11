@@ -1,0 +1,1515 @@
+{
+  "name": "Project SXHL_AI agents_textFocus_v4",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Read & Split Text -> Smaller text\n",
+        "height": 420,
+        "width": 1920
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2600,
+        -1380
+      ],
+      "id": "71319858-b4e2-4af2-83f8-126baf4ea9e3",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## FULL WORK FLOW\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2920,
+        -1360
+      ],
+      "typeVersion": 1,
+      "id": "4de7b709-25b0-4ecf-b065-b8296d7dc4f5",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction splitMarkdownByCauPattern(content) {\n  \n    // Regex pattern: \"Câu\" + any chars (non-greedy) + number + \".\"\n    const pattern = /(C[aâă]u?.*?\\d+\\.)/g;\n    // Split while keeping the delimiter using capturing groups\n    const parts = content.split(pattern);\n\n    const result = [];\n    // parts[0] is preamble (may be empty); parts[1] is first match, parts[2] is after, etc.\n    for (let i = 1; i < parts.length; i += 2) {\n        // Concatenate match + following text\n        const block = (parts[i] || '') + (parts[i + 1] || '');\n        result.push(block.trim());\n    }\n    return result;\n}\n\n// Example usage in n8n Code node:\nconst content = $('Extract text').first().json.data;\nconst blocks = splitMarkdownByCauPattern(content);\nconst filteredBlocks = blocks.filter(block => block.includes('$'));\nreturn filteredBlocks.map((block, idx) => ({ json: { index: idx+1, block } }));\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        -1300
+      ],
+      "id": "9331db42-ffed-4262-9d4f-9077db754428",
+      "name": "Split items"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4e67b558-6808-4592-b497-b07c856a3b61"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ca3fb66f-0e39-4cb0-a378-78eeda4cb420",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MC"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "51b0fe38-b447-493a-a63c-8679dd3fea7c",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "18",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TF"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        600,
+        -1300
+      ],
+      "id": "8bb08a5a-c285-48f7-8fd3-3958a8f68dc9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết\",\n\"answer_key\": \"index của đáp án từ 0 tới 3. A B C D tương ứng với 0 1 2 3\",\n\"muc_do\": \"1, 2, hoặc 3\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        -1200
+      ],
+      "id": "18ff9be6-6277-4947-b083-90050c64c481",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -2140,
+        -1300
+      ],
+      "id": "2f596a09-70f2-4e97-88c2-c052e1aa2ec6",
+      "name": "Extract text"
+    },
+    {
+      "parameters": {
+        "jsCode": "function classify(text = '') {\n  const mc = (text.match(/(^|\\n)\\s*[A-D]\\s*[\\.\\):]/g) || []).length;\n  const tf = (text.match(/(^|\\n)\\s*[a-d]\\s*\\)/g) || []).length;\n\n  if (mc >= 3 && mc > tf) return 2; // MC wins\n  if (tf >= 3) return 18;   // TF\n  return 1; // SA\n}\n\nconst items = $input.all();\n\nreturn items.map(item => {\n  const content = item.json.block;\n  const type = classify(String(content));\n  \n  let augmented = content.replace(/^Câu\\s+\\d+\\.\\s*/i, '');\n  \n  if (type == 1) {augmented = augmented + ' Đáp án: __key__'}\n  \n  \n  return { json: { \n    item: augmented , \n    type\n  } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        -1280
+      ],
+      "id": "20fa1844-bb94-4f11-8075-0c1558a3e84e",
+      "name": "Type classifier v2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \nGợi ý làm bài cần ngắn gọn, súc tích, và bắt đầu bằng một động từ. Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài.\nBước 3: Đưa index của đáp án\nBước 4: đánh giá mức độ câu hỏi\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, phép tính dạng LaTeX chèn trong dấu $\",\n\"answer_key\": \"index của đáp án từ 0 tới 3. A B C D tương ứng với 0 1 2 3\",\n\"muc_do\": \"1 (dễ), 2 (trung bình), hoặc 3 (khó)\"\n}\n\n# Lưu ý\nViết công thức, phép tính bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000.\n\n",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        940,
+        -1380
+      ],
+      "id": "f75e6958-c540-47ac-8acc-24dff7ca0973",
+      "name": "MC solver",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"question\": \"Tập xác định của hàm số $y = \\\\frac{1}{x - 2}$ là:\",\n\"options\": [\"$x > 2$\", \"$x ≠ 2$\", \"$x < 2$\", \"$x = 2$\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        -860
+      ],
+      "id": "e6e3ae60-cc6b-426b-a868-6d9b055b810c",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1980,
+        -1300
+      ],
+      "id": "e2d7af0b-20b0-47f2-8004-da82a25cb739",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/question-bank/editor/fetch-node",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "iid",
+              "value": "={{ $('Item Infor').first().json.bank_iid }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/admin/content-manager/folder/65f9342205fa1dc3dc014480"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value; name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "_sand_token",
+              "value": "={{ $('Login Info').first().json.token }}"
+            },
+            {
+              "name": "_sand_uiid",
+              "value": "={{ $('Login Info').first().json.uid }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        -1300
+      ],
+      "id": "eeac3e71-49d6-48b5-8730-e246cd91b103",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c286b29-5ff2-4538-ae03-4f286ce3c19d",
+              "name": "token",
+              "value": "={{ $(\"Login\").first().json.result.token }}",
+              "type": "string"
+            },
+            {
+              "id": "7cbb922f-6bf8-45ea-b333-cc9ae2bd82ce",
+              "name": "uid",
+              "value": "={{ $(\"Login\").first().json.result.iid }}",
+              "type": "string"
+            },
+            {
+              "id": "4296ec2a-1d5b-4a9e-a27e-5b97c5f8735c",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2460,
+        -1300
+      ],
+      "id": "7efa3b62-4967-40ef-81a9-f9c13ed9021b",
+      "name": "Login Info"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/user/login",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/user/login/?logout=1"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lname",
+              "value": "aeglobal"
+            },
+            {
+              "name": "pass",
+              "value": "123"
+            },
+            {
+              "name": "submit",
+              "value": "1"
+            },
+            {
+              "name": "_sand_domain",
+              "value": "aeglobal"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1860,
+        -1300
+      ],
+      "id": "59269647-5d9b-4c6e-bdc6-6486a63df15a",
+      "name": "Login"
+    },
+    {
+      "parameters": {
+        "jsCode": "function jsonToKeyValuePairs(data) {\n  const result = {};\n\n  function walk(obj, path = []) {\n    if (Array.isArray(obj)) {\n      for (let i = 0; i < obj.length; i++) {\n        walk(obj[i], [...path, i]);\n      }\n    } else if (typeof obj === 'object' && obj !== null) {\n      Object.keys(obj).forEach(key => {\n        walk(obj[key], [...path, key]);\n      });\n    } else {\n      // Chỉ thêm [ ] cho các phần tử sau phần tử đầu tiên\n      const rootKey = path[0];              // Ví dụ: questions\n      const restKeys = path.slice(1);       // Ví dụ: [0, 'content']\n\n      let finalKey = rootKey;\n\n      if (restKeys.length > 0) {\n        finalKey += '[' + restKeys.join('][') + ']';\n      }\n\n      result[finalKey] = obj === null ? '' : obj.toString();\n    }\n  }\n\n  walk(data);\n  return result;\n}\n\nlet questionsData = $('Question array').first().json;\n\nlet questions = jsonToKeyValuePairs(questionsData);\nconsole.log(questions)\n\nconst request_options = {\n  url: 'https://steve-api.lotuslms.com/exercise/editor/add-questions ',\n  method: 'POST',\n  body: {\n    ...questions,\n    \"exerciseIid\": $input.first().json.result.exercise_iid,\n    \"rootNode[iid]\": $('Item Infor').first().json.bank_iid,\n    \"rootNode[ntype]\": \"question-bank\",\n    \"fileId\": (new Date()).toTimeString(),\n    \"_sand_domain\": \"aeglobal\",\n    \"_sand_token\": $('Login Info').first().json.token,\n    \"_sand_uiid\": $('Login Info').first().json.uid\n  },\n  headers: {\n    \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0\",\n    \"Accept\": \"application/json, text/plain, */*\",\n    \"Accept-Language\": \"en-US,en;q=0.5\",\n    \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n    \"Referer\": \"https://aeglobal.lotuslms.com/admin/content-manager/folder/65f9342205fa1dc3dc014480 \",\n    \"Origin\": \"https://aeglobal.lotuslms.com \",\n    \"Connection\": \"keep-alive\",\n    \"Sec-Fetch-Dest\": \"empty\",\n    \"Sec-Fetch-Mode\": \"cors\",\n    \"Sec-Fetch-Site\": \"same-site\",\n    \"Cookie\": \"name=value; name=value\",\n    \"Content-Type\": \"multipart/form-data\"\n  }\n};\n\nconst response = await this.helpers.httpRequest(request_options);\n\nreturn [{\n  json: {\n    response_data: response\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        -1300
+      ],
+      "id": "7f03104a-3b55-45ab-b7a6-e1ed0a052667",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/question-bank/editor/move-exercise-questions-to-bank",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/admin/content-manager/folder/682d4914d8ce0f395e0144c8"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value; name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "iid",
+              "value": "={{ $('Item Infor').first().json.bank_iid }}"
+            },
+            {
+              "name": "submit",
+              "value": "1"
+            },
+            {
+              "name": "_sand_domain",
+              "value": "aeglobal"
+            },
+            {
+              "name": "_sand_token",
+              "value": "={{ $('Login Info').item.json.token }}"
+            },
+            {
+              "name": "_sand_uiid",
+              "value": "={{ $('Login Info').item.json.uid }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3080,
+        220
+      ],
+      "id": "a3626415-e7c1-4b2f-929c-014bd14a907e",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập:\n {{ $json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ thích ứng với format cài đặt trước, chỉ sửa lỗi chính tả nếu có.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\"question\": \"Tập xác định của hàm số $y = \\\\frac{1}{x - 2}$ là:\",\n\"options\": [\"$x > 2$\", \"$x ≠ 2$\", \"$x < 2$\", \"$x = 2$\"]\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        920,
+        -1040
+      ],
+      "id": "a856ab42-990b-4f22-bf24-7e0dbc3537b7",
+      "name": "MC extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "/*  Get the correct answer index (cast to Number for safety) */\n\n/* Iterate over current node input */\nreturn $input.all().map(item => {\n  const correctIndex = Number(item.json.output.answer_key ?? 0);\n\n  /* 3️⃣  Build the answers array, all flagged 0 first */\n  const answers = (item.json.output.options || []).map(opt => ({\n    text: opt,\n    is_answer: 0,\n  }));\n\n  /* 4️⃣  Flip the is_answer bit at correctIndex */\n  if (answers[correctIndex]) answers[correctIndex].is_answer = 1;   // .forEach not needed\n\n  /* 5️⃣  Compose the final question object */\n  const question = {\n    type: 2,          // e.g. 2 for multiple-choice\n    content: item.json.output.question,\n    answers,                               // array built above\n    tpl_type: \"mc_answer_text\",\n    difficulty: item.json.output.muc_do,\n    hints: [\n      { name: item.json.output.hint},\n      { name: item.json.output.solution},\n    ],\n    shufflable: 0,\n    tags: [$('Item Infor').first().json.source]\n  };\n\n  /* 6️⃣  Return an item that matches your schema */\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -1220
+      ],
+      "id": "34388277-ed0e-4757-8c50-e7e99906fe75",
+      "name": "LMS MC parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"question\": \"Tính giá trị của biểu thức $A = 2x + 3$ khi $x = 4$. Giá trị của biểu thức là __key__\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -1660
+      ],
+      "id": "6f975391-a60a-4d84-8a18-71c4a876e3c0",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập:\n {{ $json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ sửa lỗi chính tả nếu có, thích ứng với format cài đặt trước.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\n\"question\": \"Tính giá trị của biểu thức $A = 2x + 3$ khi $x = 4$. Giá trị của biểu thức là __key__\",\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        960,
+        -1860
+      ],
+      "id": "173f8949-0f7c-4d45-9655-a09b9e7d6b00",
+      "name": "SA extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết\",\n\"answers\": \"đáp án cần điền\",\n\"muc_do\": \"1, 2, hoặc 3\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        -2040
+      ],
+      "id": "f0a0a254-a3c1-402b-9175-44da5912088d",
+      "name": "Structured Output Parser4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \nGợi ý làm bài cần ngắn gọn, súc tích, và bắt đầu bằng một động từ. Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài.\nBước 3: Đưa index của đáp án\nBước 4: đánh giá mức độ câu hỏi\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, viết công thức bằng LaTeX chèn trong dấu $, không sử dụng \\n\",\n\"answer\": \"đáp án cần điền\",\n\"muc_do\": \"1 (dễ), 2 (trung bình), hoặc 3 (khó)\"\n}\n\n# Lưu ý\nViết số, công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000.\n\n",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        940,
+        -2240
+      ],
+      "id": "edf531f0-3f8f-4d15-8d98-a9f30638dd14",
+      "name": "SA solver",
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n\n  const content   = item.json.output.question; \n  const adapted_content = content.replace(\"__key__\", `__${item.json.output.answers}__`)\n\n  const question = {\n      \"type\": 1,\n      \"content\": adapted_content,\n      \"answers\": [String(item.json.output.answers)],\n      \"difficulty\": item.json.output.muc_do,\n      \"hints\": [\n        {\n           \"name\": item.json.output.hint\n        },\n        {\n          \"name\": item.json.output.solution\n        }\n      ],\n    tags: [$('Item Infor').first().json.source]\n    };\n\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1660,
+        -2060
+      ],
+      "id": "a8086c02-6aef-4c2a-8839-88d14f40eada",
+      "name": "LMS SA parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "const filename = $('On form submission').first().json.data.filename;\n\nconst grade = filename.split(\"_\")[0]\n\nconst source = filename.split(\"_\")[1]\n\n// take the last chunk after splitting by \"_\"\nconst lastChunk = filename.split(\"_\").pop();   // \"28545799.md\"\n// remove the extension (anything after the last dot)\nconst id = lastChunk.replace(/\\.[^.]+$/, \"\");  // \"28545799\"\n\nreturn {\n  grade,\n  source,\n  bank_iid: id\n} "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1460,
+        -1300
+      ],
+      "id": "a101bf75-3073-4975-bc8a-d5a1dd6da737",
+      "name": "Item Infor"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"statement\": \"Xét tính đúng sai của các phát biểu sau, cho biết $x + y = 4$\",\n  \"likert_questions\": [\n        {\"content\": \"$x + y < 3$\"},\n        {\"content\": \"$x.y = 5$\"},\n        {\"content\": \"$x^2 + y/2 < 5$\"}\n      ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        0
+      ],
+      "id": "8ef372da-7bf0-41a5-ac44-24dff9ca417b",
+      "name": "Structured Output Parser5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập:\n {{ $json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ sửa lỗi chính tả nếu có, chỉ thích ứng với format cài đặt trước.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\n  \"statement\": \"Xét tính đúng sai của các phát biểu sau, cho biết $x + y = 4$\",\n  \"likert_questions\": [\n        {\"content\": \"$x + y < 3$\"},\n        {\"content\": \"$x.y = 5$\"},\n        {\"content\": \"$x^2 + y/2 < 5$\"}\n      ]\n}\n\nLưu ý: Viết công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        920,
+        -140
+      ],
+      "id": "305a9a77-7bf6-4637-a5eb-07ed62eac621",
+      "name": "TF extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, xét tính đúng sai của từng khẳng định, phép tính LaTeX chèn trong dấu $\",\n\"answer_key\": \"[[0], [1], [0]]\",\n\"muc_do\": \"1 (dễ), 2 (trung bình), hoặc 3 (khó)\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        -300
+      ],
+      "id": "982e4f79-65e9-4bd6-aedc-85a7709cab3d",
+      "name": "Structured Output Parser6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \nGợi ý làm bài cần ngắn gọn, súc tích, và bắt đầu bằng một động từ. Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài.\nBước 3: Đưa index của đáp án\nBước 4: đánh giá mức độ câu hỏi\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, xét tính đúng sai của từng khẳng định, phép tính LaTeX chèn trong dấu $, không dùng \\n\",\n\"answer_key\": [[0 (nếu nhận định đúng)], [1 (nếu nhận định sai)], [0]],\n\"muc_do\": \"1 (dễ), 2 (trung bình), hoặc 3 (khó)\"\n}\n\n# Lưu ý\nViết công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000.\n\n",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        920,
+        -480
+      ],
+      "id": "e705cb1f-514f-4451-963b-9cb2066736be",
+      "name": "TF solver",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "jsCode": "/* Iterate over current node input */\nreturn $input.all().map(item => {\n  \n  const question = {\n      \"type\": 18,\n      \"content\": item.json.output.statement,\n      \"likert_answers\": [\n        {\n          \"content\": \"Đúng\",\n          \"id\": \"lkc1\"\n        },\n        {\n          \"content\": \"Sai\",\n          \"id\": \"lkc2\"\n        }\n      ],\n      \"likert_questions\": item.json.output.likert_questions,\n      \"likert_correct_answers\": JSON.parse(item.json.output.answer_key),\n      \"difficulty\": item.json.output.muc_do,\n      \"hints\": [\n        {\n          \"name\": item.json.output.hint\n        },\n        {\n          \"name\": item.json.output.solution\n        }\n      ],\n    tags: [$('Item Infor').first().json.source]\n    };\n\n  /*  Return an item that matches your schema */\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -300
+      ],
+      "id": "4445278a-d2ba-46b0-bb93-053599424ffe",
+      "name": "LMS TF parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1400,
+        -2060
+      ],
+      "id": "f203bcd2-f4f0-4ced-849d-39b41219cbf3",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1440,
+        -1220
+      ],
+      "id": "d3e6861c-192a-45ff-9ddd-eafd33777205",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1320,
+        -300
+      ],
+      "id": "f9b28cad-ce7d-44c6-b47c-b68f1323e61e",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergedArray = $input.all().map(i => i.json.question);  // => [ {...}, {...}, ... ]\nreturn [{\n  json: { questions: mergedArray }   // single item out\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        -1300
+      ],
+      "id": "139fd673-e7b1-4b50-94a5-e22c40018d32",
+      "name": "Question array"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -440,
+        -1300
+      ],
+      "id": "91ea9f5e-0153-404d-bf12-266ea804f87a",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "formTitle": "Math Problems",
+        "formDescription": "Drop your math text here",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "data",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2480,
+        -1300
+      ],
+      "id": "2485d449-3d69-4298-9457-f39931564678",
+      "name": "On form submission",
+      "webhookId": "9fa9e013-a012-4742-9042-5a3b9b5d19f0"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Flow status",
+        "completionMessage": "=Success: {{ $input.first().json.success }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        3340,
+        220
+      ],
+      "id": "e7d5b0f5-7202-4b7c-8356-a2a249f36549",
+      "name": "Form",
+      "webhookId": "ce1614d9-29f1-4ce0-bd1a-ad0b95d13d02"
+    },
+    {
+      "parameters": {
+        "content": "## EXP SITE\n",
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2760,
+        520
+      ],
+      "typeVersion": 1,
+      "id": "4385ea69-2fa9-48c1-b954-f1b38ece0c64",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        -1060
+      ],
+      "id": "74695ed9-b988-4c7b-9b56-eea83826c2d7",
+      "name": "General Task",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0Oj8gltDW0jubgn",
+          "name": "OpenRouter AE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1380,
+        -780
+      ],
+      "id": "3ef27be6-17e4-4b32-96be-b8e376277d5e",
+      "name": "Reasoning model",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0Oj8gltDW0jubgn",
+          "name": "OpenRouter AE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1580,
+        -640
+      ],
+      "id": "1fb03f34-c8c0-4d61-8e49-61523fd1e34a",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "waoLRV3Zc0qdlDgl",
+          "name": "OpenAI Me"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "math_knowledge",
+        "toolDescription": "Lấy thông tin về kiến thức Toán",
+        "tableName": {
+          "__rl": true,
+          "value": "toan_12_vectors",
+          "mode": "list",
+          "cachedResultName": "toan_12_vectors"
+        },
+        "topK": 1,
+        "options": {
+          "queryName": "match_toan_12_vectors"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        1580,
+        -800
+      ],
+      "id": "7fa7ccf1-abf0-4b92-8ab6-fc286a438db1",
+      "name": "Supabase Vector Store2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "nLKvqE5HzniottFl",
+          "name": "Neo Nguyen Project"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Split items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "SA solver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MC extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MC solver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TF extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TF solver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text": {
+      "main": [
+        [
+          {
+            "node": "Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Type classifier v2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC solver": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Question array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login Info": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Item Infor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BankData": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LMS MC parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser4": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SA extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "SA solver": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LMS SA parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Infor": {
+      "main": [
+        [
+          {
+            "node": "Split items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser5": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser6": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TF extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TF solver": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "LMS TF parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "LMS SA parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "LMS MC parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "LMS TF parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question array": {
+      "main": [
+        [
+          {
+            "node": "Login Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Type classifier v2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Task": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "TF extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reasoning model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "TF solver",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC solver",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SA solver",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store2": {
+      "ai_tool": [
+        [
+          {
+            "node": "TF solver",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "MC solver",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "SA solver",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "056aaf6f-3a2d-4581-a5e5-e672fe80a438",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "861cdce3c56afff549db6b3bcaa434d956ea7f52bf2bb2c15080b9f278a79c1f"
+  },
+  "id": "ojsxf5JDN4Vr3O4V",
+  "tags": []
+}

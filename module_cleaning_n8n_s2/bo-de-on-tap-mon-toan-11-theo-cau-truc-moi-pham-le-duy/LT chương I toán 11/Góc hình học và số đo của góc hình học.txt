@@ -1,0 +1,32 @@
+1. Góc hình học và số đo của góc hình học
+
+1.1. Đơn vị đo góc
+
+$$
+\begin{aligned}
+& 180^{\circ}=\pi \mathrm{rad} . \\
+& 1 \mathrm{rad}=\left(\frac{180}{\pi}\right)^{\circ} \approx 57^{\circ} 17^{\prime} 45^{\prime \prime} . \\
+& 1^{\circ}=\left(\frac{\pi}{180}\right) \mathrm{rad} \approx 0,0175 \mathrm{rad} .
+\end{aligned}
+$$
+
+Bảng đổi số đo độ và số đo radian của một số góc đặc biệt:
+
+| Độ | $30^{\circ}$ | $45^{\circ}$ | $60^{\circ}$ | $90^{\circ}$ | $120^{\circ}$ | $135^{\circ}$ | $180^{\circ}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Radian | $\frac{\pi}{6}$ | $\frac{\pi}{4}$ | $\frac{\pi}{3}$ | $\frac{\pi}{2}$ | $\frac{2 \pi}{3}$ | $\frac{3 \pi}{4}$ | $\pi$ |
+
+Đơn vị rađian.
+
+Cho đường tròn $(O)$ tâm $O$, bán kính $R$ và một cung $A B$ trên $(O)$.
+Ta nói cung tròn $A B$ có số đo bằng 1 rađian nếu độ dài của nó đúng bằng bán kính $R$.
+Khi đó ta cũng nói rằng góc $A O B$ có số đo bằng 1 rađian và viết $\widehat{A O B}=1$ rad.
+
+Quan hệ giữa độ và rađian.
+Do đường tròn có độ dài là $2 \pi R$ nên nó có số đo $2 \pi \mathrm{rad}$.
+Mặt khác đường tròn có số đo bằng $360^{\circ}$ nên $360^{\circ}=2 \pi \mathrm{rad}$. Nên $1^{\circ}=\frac{\pi}{180} \mathrm{rad} ; 1 \mathrm{rad}=\left(\frac{180}{\pi}\right)^{\circ}$.
+Khi viết số đo của một góc theo đơn vị rađian, người ta thường không viết chữ rad sau số đo. Chẳng hạn góc $\frac{\pi}{2}$ được hiểu là góc $\frac{\pi}{2} \mathrm{rad}$.
+
+1.2. Độ dài cung tròn
+
+Một cung của đường tròn bán kính $R$ và có số đo $\alpha$ rad thì có độ dài $l=R \alpha$.

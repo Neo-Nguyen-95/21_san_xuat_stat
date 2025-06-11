@@ -1,0 +1,2226 @@
+{
+  "name": "Project SXHL_AI agents_textFocus_v5",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Read & Split Text -> Smaller text\n",
+        "height": 420,
+        "width": 1720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3540,
+        860
+      ],
+      "id": "d8e9940c-cb6b-4ec2-8999-eed5b25c85aa",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## FULL WORK FLOW\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3860,
+        880
+      ],
+      "typeVersion": 1,
+      "id": "a6357cea-0c30-4bba-bf1e-d9cb8af20a39",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction splitMarkdownByCauPattern(content) {\n  \n    // Regex pattern: \"Câu\" + any chars (non-greedy) + number + \".\"\n    const pattern = /(C[aâă]u?.*?\\d+\\.)/g;\n    // Split while keeping the delimiter using capturing groups\n    const parts = content.split(pattern);\n\n    const result = [];\n    // parts[0] is preamble (may be empty); parts[1] is first match, parts[2] is after, etc.\n    for (let i = 1; i < parts.length; i += 2) {\n        // Concatenate match + following text\n        const block = (parts[i] || '') + (parts[i + 1] || '');\n        result.push(block.trim());\n    }\n    return result;\n}\n\n// Example usage in n8n Code node:\nconst content = $('Extract text').first().json.data;\nconst blocks = splitMarkdownByCauPattern(content);\nconst filteredBlocks = blocks.filter(block => block.includes('$'));\nreturn filteredBlocks.map((block, idx) => ({ json: { index: idx+1, block } }));\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1980,
+        940
+      ],
+      "id": "e5e09e77-9997-48ba-85d3-977dbd25a84e",
+      "name": "Split items"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Merge4').item.json.type }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4e67b558-6808-4592-b497-b07c856a3b61"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ca3fb66f-0e39-4cb0-a378-78eeda4cb420",
+                    "leftValue": "={{ $('Merge4').item.json.type }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MC"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "51b0fe38-b447-493a-a63c-8679dd3fea7c",
+                    "leftValue": "={{ $('Merge4').item.json.type }}",
+                    "rightValue": "18",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TF"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        440,
+        940
+      ],
+      "id": "f59b4029-0eff-4c6e-9178-60de39360b33",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết\",\n\"answer_key\": \"index của đáp án từ 0 tới 3. A B C D tương ứng với 0 1 2 3\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        1060
+      ],
+      "id": "258236b5-6a3d-47b2-a043-bb8dab2ea7c4",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -3080,
+        940
+      ],
+      "id": "367cc84d-734c-43a6-8bb5-a100722a6c8c",
+      "name": "Extract text"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\nSử dụng kiến thức lí thuyết:\n{{ $('Switch').item.json.knowledge }}\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \n- Ngắn gọn, không trình bày cụ thể các bước giải, chỉ mang tính định hướng về phương pháp hoặc công cụ cần sử dụng.\n- Bắt đầu bằng một động từ, khuyến khích sử dụng các động từ sau: Nhận ra, Nhận dạng, Nêu tên, Xác định, Tìm kiếm, Mô tả, Liệt kê, Phát biểu, Diễn đạt lại, So sánh, Áp dụng, Giải thích, Suy luận, Dự đoán, Lựa chọn, Phân biệt, Phân loại, Sắp xếp, Biến đổi, Khai triển, Ước lượng, Áp dụng (quy trình nhiều bước), Biểu diễn, Phân tích, Tổng hợp, Lập luận nhiều bước, Đánh giá, Vận dụng, Khái quát, Phát hiện (vấn đề có tính mới), Mở rộng, Liên hệ, Tạo ra, Đề xuất.\n- Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết.\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài. Lời giải cần trình bày một cách tổng hợp, sử dụng lí thuyết và lập luận để suy ra phương án đúng, không được phân tích riêng từng phương án A, B, C, D.\nBước 3: Đưa index của đáp án.\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, phép tính dạng LaTeX chèn trong dấu $\",\n\"answer_key\": \"index của đáp án từ 0 tới 3. A B C D tương ứng với 0 1 2 3\"\n}\n\n# Lưu ý\nViết công thức, phép tính bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000. Dấu nhân không dùng \\times mà dùng \\cdot.\n\n",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1000,
+        920
+      ],
+      "id": "2b3b7793-3239-439e-ba39-572db6abf026",
+      "name": "MC solver",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"question\": \"Tập xác định của hàm số $y = \\\\frac{1}{x - 2}$ là:\",\n\"options\": [\"$x > 2$\", \"$x ≠ 2$\", \"$x < 2$\", \"$x = 2$\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        1400
+      ],
+      "id": "430513eb-78e9-4feb-9570-99119fba5e6e",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        3240,
+        980
+      ],
+      "id": "28608013-6767-4a5d-a953-382a94f8383d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/question-bank/editor/fetch-node",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "iid",
+              "value": "={{ $('Item Infor').first().json.bank_iid }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/admin/content-manager/folder/65f9342205fa1dc3dc014480"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value; name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "_sand_token",
+              "value": "={{ $('Login Info').first().json.token }}"
+            },
+            {
+              "name": "_sand_uiid",
+              "value": "={{ $('Login Info').first().json.uid }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3980,
+        980
+      ],
+      "id": "1c25367c-a2c7-47a0-a997-0a2063148412",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c286b29-5ff2-4538-ae03-4f286ce3c19d",
+              "name": "token",
+              "value": "={{ $(\"Login\").first().json.result.token }}",
+              "type": "string"
+            },
+            {
+              "id": "7cbb922f-6bf8-45ea-b333-cc9ae2bd82ce",
+              "name": "uid",
+              "value": "={{ $(\"Login\").first().json.result.iid }}",
+              "type": "string"
+            },
+            {
+              "id": "4296ec2a-1d5b-4a9e-a27e-5b97c5f8735c",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3720,
+        980
+      ],
+      "id": "a7724f36-496d-430b-9db9-dfa105cb58ba",
+      "name": "Login Info"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/user/login",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/user/login/?logout=1"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lname",
+              "value": "aeglobal"
+            },
+            {
+              "name": "pass",
+              "value": "123"
+            },
+            {
+              "name": "submit",
+              "value": "1"
+            },
+            {
+              "name": "_sand_domain",
+              "value": "aeglobal"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2800,
+        940
+      ],
+      "id": "30a287f6-2d2b-4e2d-bdcd-45231b2181d4",
+      "name": "Login"
+    },
+    {
+      "parameters": {
+        "jsCode": "function jsonToKeyValuePairs(data) {\n  const result = {};\n\n  function walk(obj, path = []) {\n    if (Array.isArray(obj)) {\n      for (let i = 0; i < obj.length; i++) {\n        walk(obj[i], [...path, i]);\n      }\n    } else if (typeof obj === 'object' && obj !== null) {\n      Object.keys(obj).forEach(key => {\n        walk(obj[key], [...path, key]);\n      });\n    } else {\n      // Chỉ thêm [ ] cho các phần tử sau phần tử đầu tiên\n      const rootKey = path[0];              // Ví dụ: questions\n      const restKeys = path.slice(1);       // Ví dụ: [0, 'content']\n\n      let finalKey = rootKey;\n\n      if (restKeys.length > 0) {\n        finalKey += '[' + restKeys.join('][') + ']';\n      }\n\n      result[finalKey] = obj === null ? '' : obj.toString();\n    }\n  }\n\n  walk(data);\n  return result;\n}\n\nlet questionsData = $('Question array').first().json;\n\nlet questions = jsonToKeyValuePairs(questionsData);\nconsole.log(questions)\n\nconst request_options = {\n  url: 'https://steve-api.lotuslms.com/exercise/editor/add-questions ',\n  method: 'POST',\n  body: {\n    ...questions,\n    \"exerciseIid\": $input.first().json.result.exercise_iid,\n    \"rootNode[iid]\": $('Item Infor').first().json.bank_iid,\n    \"rootNode[ntype]\": \"question-bank\",\n    \"fileId\": (new Date()).toTimeString(),\n    \"_sand_domain\": \"aeglobal\",\n    \"_sand_token\": $('Login Info').first().json.token,\n    \"_sand_uiid\": $('Login Info').first().json.uid\n  },\n  headers: {\n    \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) Gecko/20100101 Firefox/138.0\",\n    \"Accept\": \"application/json, text/plain, */*\",\n    \"Accept-Language\": \"en-US,en;q=0.5\",\n    \"Accept-Encoding\": \"gzip, deflate, br, zstd\",\n    \"Referer\": \"https://aeglobal.lotuslms.com/admin/content-manager/folder/65f9342205fa1dc3dc014480 \",\n    \"Origin\": \"https://aeglobal.lotuslms.com \",\n    \"Connection\": \"keep-alive\",\n    \"Sec-Fetch-Dest\": \"empty\",\n    \"Sec-Fetch-Mode\": \"cors\",\n    \"Sec-Fetch-Site\": \"same-site\",\n    \"Cookie\": \"name=value; name=value\",\n    \"Content-Type\": \"multipart/form-data\"\n  }\n};\n\nconst response = await this.helpers.httpRequest(request_options);\n\nreturn [{\n  json: {\n    response_data: response\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4300,
+        980
+      ],
+      "id": "3927caad-bb79-4d74-859f-7ee7e371890b",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://steve-api.lotuslms.com/question-bank/editor/move-exercise-questions-to-bank",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json, text/plain, */*"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "Referer",
+              "value": "https://aeglobal.lotuslms.com/admin/content-manager/folder/682d4914d8ce0f395e0144c8"
+            },
+            {
+              "name": "Origin",
+              "value": "https://aeglobal.lotuslms.com"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "empty"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-site"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0"
+            },
+            {
+              "name": "Cookie",
+              "value": "name=value; name=value"
+            },
+            {
+              "name": "cookie",
+              "value": "name=value;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "iid",
+              "value": "={{ $('Item Infor').first().json.bank_iid }}"
+            },
+            {
+              "name": "submit",
+              "value": "1"
+            },
+            {
+              "name": "_sand_domain",
+              "value": "aeglobal"
+            },
+            {
+              "name": "_sand_token",
+              "value": "={{ $('Login Info').item.json.token }}"
+            },
+            {
+              "name": "_sand_uiid",
+              "value": "={{ $('Login Info').item.json.uid }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4340,
+        2500
+      ],
+      "id": "c3fb851a-0e66-4e0c-bdc0-8e027a75e4a3",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập:\n{{ $('Switch').item.json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ thích ứng với format cài đặt trước, chỉ sửa lỗi chính tả nếu có.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\"question\": \"Tập xác định của hàm số $y = \\\\frac{1}{x - 2}$ là:\",\n\"options\": [\"$x > 2$\", \"$x ≠ 2$\", \"$x < 2$\", \"$x = 2$\"]\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1260,
+        1240
+      ],
+      "id": "ba1e45cf-858d-42bf-a4a3-a43a89d7e74e",
+      "name": "MC extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "/*  Get the correct answer index (cast to Number for safety) */\n\n/* Iterate over current node input */\nreturn $input.all().map(item => {\n  const correctIndex = Number(item.json.output.answer_key ?? 0);\n\n  /* 3️⃣  Build the answers array, all flagged 0 first */\n  const answers = (item.json.output.options || []).map(opt => ({\n    text: opt,\n    is_answer: 0,\n  }));\n\n  /* 4️⃣  Flip the is_answer bit at correctIndex */\n  if (answers[correctIndex]) answers[correctIndex].is_answer = 1;   // .forEach not needed\n\n  /* 5️⃣  Compose the final question object */\n  const question = {\n    type: 2,          // e.g. 2 for multiple-choice\n    content: item.json.output.question,\n    answers,                               // array built above\n    tpl_type: \"mc_answer_text\",\n    difficulty: Number(item.json.output.difficulty),\n    hints: [\n      { name: item.json.output.hint},\n      { name: item.json.output.solution},\n    ],\n    shufflable: 0,\n    tags: [$('Item Infor').first().json.source],\n    student_competency_iids: item.json.output.student_competency_iids.split(\",\").map(Number)\n  };\n\n  /* 6️⃣  Return an item that matches your schema */\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        1000
+      ],
+      "id": "2ba39da2-3b98-4b71-8073-697ace96174d",
+      "name": "LMS MC parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"question\": \"Tính giá trị của biểu thức $A = 2x + 3$ khi $x = 4$. Giá trị của biểu thức là __key__\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1480,
+        180
+      ],
+      "id": "68012c60-104c-4ccf-95ba-885bc037a72a",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập: \n{{ $('Switch').item.json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ sửa lỗi chính tả nếu có, thích ứng với format cài đặt trước.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\n\"question\": \"Tính giá trị của biểu thức $A = 2x + 3$ khi $x = 4$. Giá trị của biểu thức là __key__\",\n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "f13a7e43-d4d5-4f16-84c4-60fc253e2692",
+      "name": "SA extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết\",\n\"answers\": \"đáp án cần điền\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1480,
+        -220
+      ],
+      "id": "3a813120-fe2a-496a-8a27-7e44cb7841e6",
+      "name": "Structured Output Parser4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\nSử dụng kiến thức lí thuyết:\n{{ $('Switch').item.json.knowledge }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \n- Ngắn gọn, không trình bày cụ thể các bước giải, chỉ mang tính định hướng về phương pháp hoặc công cụ cần sử dụng.\n- Bắt đầu bằng một động từ, khuyến khích sử dụng các động từ sau: Nhận ra, Nhận dạng, Nêu tên, Xác định, Tìm kiếm, Mô tả, Liệt kê, Phát biểu, Diễn đạt lại, So sánh, Áp dụng, Giải thích, Suy luận, Dự đoán, Lựa chọn, Phân biệt, Phân loại, Sắp xếp, Biến đổi, Khai triển, Ước lượng, Áp dụng (quy trình nhiều bước), Biểu diễn, Phân tích, Tổng hợp, Lập luận nhiều bước, Đánh giá, Vận dụng, Khái quát, Phát hiện (vấn đề có tính mới), Mở rộng, Liên hệ, Tạo ra, Đề xuất.\n- Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết.\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài. Có thể phân tích trực tiếp từng mệnh đề hoặc biểu thức\nBước 3: Đưa ra đáp án cần điền.\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, viết công thức bằng LaTeX chèn trong dấu $, không sử dụng \\n\",\n\"answer\": \"đáp án cần điền\"\n}\n\n# Lưu ý\nViết số, công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000. Dấu nhân không dùng \\times mà dùng \\cdot.",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1180,
+        -400
+      ],
+      "id": "8912d827-02d9-493d-a089-691d96415df3",
+      "name": "SA solver",
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n\n  const content   = item.json.output.question; \n  const adapted_content = content.replace(\"__key__\", `__${item.json.output.answers}__`)\n\n  const question = {\n      \"type\": 1,\n      \"content\": adapted_content,\n      \"answers\": [String(item.json.output.answers)],\n      \"difficulty\": Number(item.json.output.difficulty),\n      \"hints\": [\n        {\n           \"name\": item.json.output.hint\n        },\n        {\n          \"name\": item.json.output.solution\n        }\n      ],\n    tags: [$('Item Infor').first().json.source],\n    student_competency_iids: item.json.output.student_competency_iids.split(\",\").map(Number)\n    };\n\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2540,
+        -640
+      ],
+      "id": "64efb887-4ecb-4a28-9c61-c4c3cb294fab",
+      "name": "LMS SA parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "const filename = $('On form submission').first().json.data.filename;\n\nconst grade = filename.split(\"_\")[0]\n\nconst source = filename.split(\"_\")[1]\n\n// take the last chunk after splitting by \"_\"\nconst lastChunk = filename.split(\"_\").pop();   // \"28545799.md\"\n// remove the extension (anything after the last dot)\nconst id = lastChunk.replace(/\\.[^.]+$/, \"\");  // \"28545799\"\n\nreturn {\n  grade,\n  source,\n  bank_iid: id\n} "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2400,
+        940
+      ],
+      "id": "68a73d20-0f1b-4dca-b1c2-66f027ccecc2",
+      "name": "Item Infor"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"statement\": \"Xét tính đúng sai của các phát biểu sau, cho biết $x + y = 4$\",\n  \"likert_questions\": [\n        {\"content\": \"$x + y < 3$\"},\n        {\"content\": \"$x.y = 5$\"},\n        {\"content\": \"$x^2 + y/2 < 5$\"}\n      ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        2500
+      ],
+      "id": "6a7c73c8-a58b-4541-a3a1-bce00ef94312",
+      "name": "Structured Output Parser5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Chuyển câu hỏi sau thành dạng như thiết lập:\n{{ $('Switch').item.json.item }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Bạn là một trợ lý thông minh chuyên xử lý nội dung Toán. Hãy đọc kỹ đoạn văn hoặc danh sách câu hỏi được cung cấp và chuyển đổi toàn bộ thành một mảng JSON. Không thay đổi nội dung câu hỏi, chỉ sửa lỗi chính tả nếu có, chỉ thích ứng với format cài đặt trước.\n\nKết quả trả về dạng JSON như ví dụ sau:\n{\n  \"statement\": \"Xét tính đúng sai của các phát biểu sau, cho biết $x + y = 4$\",\n  \"likert_questions\": [\n        {\"content\": \"$x + y < 3$\"},\n        {\"content\": \"$x.y = 5$\"},\n        {\"content\": \"$x^2 + y/2 < 5$\"}\n      ]\n}\n\nLưu ý: Viết công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1340,
+        2360
+      ],
+      "id": "39ea67c2-978f-421f-acbd-efee802bd1ef",
+      "name": "TF extractor",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, xét tính đúng sai của từng khẳng định, phép tính LaTeX chèn trong dấu $\",\n\"answer_key\": \"[[0], [1], [0]]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        2180
+      ],
+      "id": "3b27b5c0-04e3-4552-8214-57b61b0e93f3",
+      "name": "Structured Output Parser6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Giải bài tập sau:\n{{ $('Switch').item.json.item }}\n\nSử dụng kiến thức lí thuyết:\n{{ $('Switch').item.json.knowledge }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# BỐI CẢNH #\nBạn là một giáo viên môn Toán cấp trung học phổ thông.\n\n# NHIỆM VỤ #\nBước 1: Đưa ra gợi ý làm bài. \n- Ngắn gọn, không trình bày cụ thể các bước giải, chỉ mang tính định hướng về phương pháp hoặc công cụ cần sử dụng.\n- Bắt đầu bằng một động từ, khuyến khích sử dụng các động từ sau: Nhận ra, Nhận dạng, Nêu tên, Xác định, Tìm kiếm, Mô tả, Liệt kê, Phát biểu, Diễn đạt lại, So sánh, Áp dụng, Giải thích, Suy luận, Dự đoán, Lựa chọn, Phân biệt, Phân loại, Sắp xếp, Biến đổi, Khai triển, Ước lượng, Áp dụng (quy trình nhiều bước), Biểu diễn, Phân tích, Tổng hợp, Lập luận nhiều bước, Đánh giá, Vận dụng, Khái quát, Phát hiện (vấn đề có tính mới), Mở rộng, Liên hệ, Tạo ra, Đề xuất.\n- Nếu có công thức, định lí, định nghĩa nào cần được áp dụng thì phải nêu tên, không cần nêu nội dung chi tiết.\nBước 2: Đưa ra lời giải chi tiết dựa trên gợi ý làm bài, có thể phân tích trực tiếp từng mệnh đề hoặc biểu thức.\nBước 3: Đưa index của đáp án ở dạng danh sách các danh sách. Ví dụ index là 0, 1, 0 thì kết quả trả về  [[0], [1], [0]], không phải [0, 1, 0].\n\n# Trả về dạng JSON:\n{ \n\"hint\": \"gợi ý làm bài\", \n\"solution\": \"lời giải chi tiết, xét tính đúng sai của từng khẳng định, phép tính LaTeX chèn trong dấu $, không dùng \\n\",\n\"answer_key\": [[0 (nếu nhận định đúng)], [1 (nếu nhận định sai)], [0]]\n}\n\n# Lưu ý\nViết công thức, phép tính ở dạng Markdown, viết công thức bằng LaTeX chèn trong dấu $, không dùng $$, không dùng \\n. Nếu có phân số thì dùng \\dfrac{}{}. Trong Tiếng Việt, ngăn cách của phần nghìn là dấu cách. Ví dụ: 2000 = 2 000, 2000 không bằng 2,000.\n\n",
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1340,
+        2000
+      ],
+      "id": "8d60c3a9-571c-42c1-b559-ca99cc4956a0",
+      "name": "TF solver",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "jsCode": "/* Iterate over current node input */\nreturn $input.all().map(item => {\n  \n  const question = {\n      \"type\": 18,\n      \"content\": item.json.output.statement,\n      \"likert_answers\": [\n        {\n          \"content\": \"Đúng\",\n          \"id\": \"lkc1\"\n        },\n        {\n          \"content\": \"Sai\",\n          \"id\": \"lkc2\"\n        }\n      ],\n      \"likert_questions\": item.json.output.likert_questions,\n      \"likert_correct_answers\": JSON.parse(item.json.output.answer_key),\n      \"difficulty\": Number(item.json.output.difficulty),\n      \"hints\": [\n        {\n          \"name\": item.json.output.hint\n        },\n        {\n          \"name\": item.json.output.solution\n        }\n      ],\n    tags: [$('Item Infor').first().json.source],\n    student_competency_iids: item.json.output.student_competency_iids.split(\",\").map(Number)\n    };\n\n  /*  Return an item that matches your schema */\n  return {\n    json: {question},\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2600,
+        2200
+      ],
+      "id": "12cbffc2-dd2a-4110-a6c1-cd3aad431cf0",
+      "name": "LMS TF parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2280,
+        -640
+      ],
+      "id": "b8dd24b0-779d-42a0-9ae9-cb59b9b0a2e2",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2580,
+        980
+      ],
+      "id": "3c3f7c32-41d4-4be0-93bb-ab77db4f8bb2",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2260,
+        2200
+      ],
+      "id": "57be7db9-3e2e-437c-8d4c-5d503840ef29",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergedArray = $input.all().map(i => i.json.question);  // => [ {...}, {...}, ... ]\nreturn [{\n  json: { questions: mergedArray }   // single item out\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3480,
+        980
+      ],
+      "id": "0be98ce2-475d-4d5b-99a0-f7ade8da8fd2",
+      "name": "Question array"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1500,
+        940
+      ],
+      "id": "8f471f32-4177-480c-9d01-6f29763e7ff6",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "formTitle": "Math Problems",
+        "formDescription": "Drop your math text here",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "data",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -3420,
+        940
+      ],
+      "id": "8b12c6c9-b7fa-4424-aa46-34e7692f0ee2",
+      "name": "On form submission",
+      "webhookId": "9fa9e013-a012-4742-9042-5a3b9b5d19f0"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Flow status",
+        "completionMessage": "=Success: {{ $input.first().json.success }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        4600,
+        2500
+      ],
+      "id": "0f5d7de6-2505-4d97-abfd-1bbe08ab2bdf",
+      "name": "Form",
+      "webhookId": "ce1614d9-29f1-4ce0-bd1a-ad0b95d13d02"
+    },
+    {
+      "parameters": {
+        "content": "## EXP SITE\n",
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3700,
+        2760
+      ],
+      "typeVersion": 1,
+      "id": "27bab901-4aef-4a1f-bcb5-13b4d86d03cb",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        1460
+      ],
+      "id": "bf146a77-c5ef-4bf3-803b-f4fda46a7cb1",
+      "name": "General Task",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0Oj8gltDW0jubgn",
+          "name": "OpenRouter AE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        1500
+      ],
+      "id": "56cd41ec-e926-40ee-bac1-b9b75fd9d8e3",
+      "name": "Reasoning model",
+      "credentials": {
+        "openAiApi": {
+          "id": "X0Oj8gltDW0jubgn",
+          "name": "OpenRouter AE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "id": "8a050e03-f8ae-400e-b625-85b2bd89b1d8",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3420,
+        2780
+      ],
+      "webhookId": "e104e40e-6134-4825-a6f0-8a646d882662"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -3160,
+        2780
+      ],
+      "id": "54fa4373-7baa-49e7-8a56-c47ffecde211",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3240,
+        3040
+      ],
+      "id": "3809ef00-1f6c-4295-ab65-1fed85a07e06",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "waoLRV3Zc0qdlDgl",
+          "name": "OpenAI Me"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "math_knowledge",
+        "toolDescription": "Lấy thông tin về kiến thức Toán",
+        "tableName": {
+          "__rl": true,
+          "value": "toan_12_vectors",
+          "mode": "list",
+          "cachedResultName": "toan_12_vectors"
+        },
+        "topK": 1,
+        "options": {
+          "queryName": "match_toan_12_vectors"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        -2920,
+        3000
+      ],
+      "id": "8ee9acfa-2679-44e5-97d2-06817fef040d",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "nLKvqE5HzniottFl",
+          "name": "Neo Nguyen Project"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2700,
+        3140
+      ],
+      "id": "1e841418-5e7a-4c00-8d3b-bb6391661f0c",
+      "name": "Embeddings OpenAI3",
+      "credentials": {
+        "openAiApi": {
+          "id": "waoLRV3Zc0qdlDgl",
+          "name": "OpenAI Me"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -780,
+        1420
+      ],
+      "id": "286570ee-cc26-4976-8f64-9ca74dd8a694",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "waoLRV3Zc0qdlDgl",
+          "name": "OpenAI Me"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        60,
+        940
+      ],
+      "id": "ad35a4b4-88f5-4946-a89b-ffcfdd087559",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// SIMPLE NON-OVERLAPPING PAIRS\nconst items = $input.all();           // all incoming items\nconst out   = [];\n\nfor (let i = 0; i < items.length; i += 2) {\n  if (i + 1 >= items.length) break;   // ignore last odd item\n\n  const joined = `${items[i].json.document.pageContent} ${items[i + 1].json.document.pageContent}`; // customise separator\n  out.push({ json: { knowledge: joined } });\n}\n\nreturn out;                           // n8n expects an array of items"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        1220
+      ],
+      "id": "f37e0fd3-1c11-4b3e-8725-6295433d0001",
+      "name": "Join sources into 1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function classify(text = '') {\n  const mc = (text.match(/(^|\\n)\\s*[A-D]\\s*[\\.\\):]/g) || []).length;\n  const tf = (text.match(/(^|\\n)\\s*[a-d]\\s*\\)/g) || []).length;\n\n  if (mc >= 3 && mc > tf) return 2; // MC wins\n  if (tf >= 3) return 18;   // TF\n  return 1; // SA\n}\n\nconst items = $input.all();\n\nreturn items.map(item => {\n  const content = item.json.block;\n  const type = classify(String(content));\n  \n  let augmented = content.replace(/^Câu\\s+\\d+\\.\\s*/i, '');\n  \n  if (type == 1) {augmented = augmented + ' Đáp án: __key__'}\n  \n  \n  return { json: { \n    item: augmented , \n    type\n  } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        940
+      ],
+      "id": "fc14154b-bb29-4f61-a7ae-9dd4edb38168",
+      "name": "Type classifier"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\",\n\"difficulty\": \"1, 2, hoặc 3\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        860
+      ],
+      "id": "2bb49123-7ec8-4732-a389-50db92cb0692",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "tableName": {
+          "__rl": true,
+          "value": "toan_12_vectors",
+          "mode": "list",
+          "cachedResultName": "toan_12_vectors"
+        },
+        "prompt": "={{ $json.block }}",
+        "topK": 2,
+        "options": {
+          "queryName": "match_toan_12_vectors"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        -820,
+        1220
+      ],
+      "id": "db776caa-c39e-4118-b15e-045ae32460b4",
+      "name": "Knowledge Math 12",
+      "credentials": {
+        "supabaseApi": {
+          "id": "nLKvqE5HzniottFl",
+          "name": "Neo Nguyen Project"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Item Infor').item.json.grade }}",
+                    "rightValue": "12",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "34481f33-3fda-4ff7-a4ed-2225f649c2da"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "T12"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "44783e00-8fc0-4f36-903a-8d0d93e85a17",
+                    "leftValue": "={{ $('Item Infor').item.json.grade }}",
+                    "rightValue": "11",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "T11"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a89738e6-24e0-4190-826c-68e5904d4b9f",
+                    "leftValue": "={{ $('Item Infor').item.json.grade }}",
+                    "rightValue": "10",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "T10"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1320,
+        1320
+      ],
+      "id": "549aec93-e993-408c-9a44-73f359c09762",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Phân loại mức độ của bài tập sau:\n{{ $('Switch').item.json.item }}\n\nLời giải:\n{{ $json.output.solution }}\n\nCho biết, học sinh đã học kiến thức sau:\n{{ $('Join sources into 1').item.json.knowledge }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "1. BỐI CẢNH \nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, bạn muốn phân loại câu hỏi theo mức độ tư tuy.  \n2. CƠ SỞ \n- Câu hỏi có độ khó M1 (nhận biết) yêu cầu học sinh biết nhận biết, nhắc lại hoặc mô tả được nội dung đã học và áp dụng trực tiếp để giải quyết một số tình huống, vấn đề quen thuộc trong học tập.  \n- Câu hỏi có độ khó M2 (thông hiểu) yêu cầu học sinh biết kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề có nội dung tương tự. Các bài tập tính toán của M2 sẽ phải tính toán nhiều bước nhưng chỉ cần áp dụng công thức. \n- Câu hỏi có độ khó M3 (vận dụng) yêu cầu học sinh vận dụng các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và cuộc sống. Các bài tập tính toán của M3 sẽ phức tạp.   \n3. NHIỆM VỤ \nGán độ khó, động từ từ một đề bài đã có lời giải và gợi ý làm bài cho trước. \n- Bước 1: Phân tích, đánh giá đề bài và kiến thức lí thuyết. \n- Bước 2: Phân loại độ khó theo 3 mức M1, M2, M3.  \n\n4. KẾT QUẢ Kết quả dạng JSON: \n{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\", \n\"difficulty\": \"Mức độ ở dạng số, 1 cho M1, 2 cho M2, và 3 cho M3\" \n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1400,
+        720
+      ],
+      "id": "88444998-ac43-471c-975f-9fa9c98ca740",
+      "name": "MC Mức"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Gán động từ cho câu hỏi sau:\n {{ $('Switch').item.json.item }}\nGợi ý: {{ $('MC solver').item.json.output.hint }}\nLời giải: {{ $('MC solver').item.json.output.solution }}\nMức: M{{ $json.output.difficulty }} \n\nTrả ra output dạng JSON:\n{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"Danh sách các mã động từ\", ví dụ: \"27854596,27854595\"\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "# Vai trò:\nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, nhiệm vụ của bạn là gán động từ phù hợp với câu hỏi.\n\n# Quy trình gán động từ:\nBước 1: Ưu tiên tìm và gán luôn các động từ xuất hiện trong gợi ý, lời giải, đề bài trùng với động từ thuộc Bảng danh mục động từ (trong file đính kèm). Nếu động từ đó không thuộc Danh mục động từ, hãy xét bản chất của câu hỏi và hành vi học sinh cần thực hiện để trả lời đúng. Từ đó đó lựa chọn động từ phù hợp trong Bảng danh mục động từ.\nBước 2: Xác định bản chất hành vi chính cần thực hiện giúp trả lời đúng câu hỏi. So khớp hành vi đó với động từ phù hợp trong Danh mục động từ.\nBước 3: Đối chiếu lại với độ khó (M1, M2, M3) đã gán, chọn động từ tương ứng có trong Danh mục động từ. Có thể gán 2 động từ ở M1 cho câu M2. Có thể gán 2 động từ của M1 và M2 cho câu M3.\nLưu ý: \n- Mỗi câu hỏi có thể được gán từ 1 đến 3 động từ, tùy thuộc vào những hành vi cần thực hiện để trả lời được câu hỏi.\n- Câu hỏi M2 dạng khẳng định đúng sai thì không được gán động từ Kiểm chứng. \n- Với những câu mà phải dùng nhiều hành vi, nhiều bước phức tạp khác nhau để làm bài có thể sử dụng động từ Lập luận nhiều bước, Áp dụng (quy trình nhiều bước).\n\n# Danh mục động từ:\nstudent_competency_iids,dong_tu,mo_ta,muc_do\n27854596,Biểu diễn,Ví dụ: Biểu diễn được miền nghiệm của bất phương trình bậc nhất hai ẩn trên mặt phẳng tọa độ.,M2\n27854595,Áp dụng (quy trình nhiều bước),\"Dùng khi phải thực hiện một chuỗi các thao tác khác nhau, liên quan đến phương pháp, các bước làm bài cần biến đổi phức tạp. Không dùng khi chỉ cần thực hiện nhiều phép tính tuần tự. Ví dụ: Áp dụng công thức tính giá trị trung bình và phương sai, Áp dụng phương pháp viết phương trình đường thẳng đi qua hai điểm cho trước.\",M2\n27854588,Lựa chọn,\"Dùng cho dạng câu trắc nghiệm, khi cần tư duy chọn phương án phù hợp, hợp lí nhất trong các tình huống tương tự hoặc có nhiều lựa chọn gần đúng. Yêu cầu lựa chọn thường xuất hiện trong đề bài. Ví dụ: “Để tìm tập hợp A∩B∪C, ta cần thực hiện các bước nào sau đây một cách hợp lí nhất?”\",M2\n27854604,Mở rộng/Liên hệ,Mở rộng/Liên hệ từ các kết quả thống kê để rút ra các kết luận có ý nghĩa.,M3\n27854601,Vận dụng,Nhận diện mô hình toán học từ ngữ cảnh thực tế và không được hỗ trợ trực tiếp bằng các công thức có sẵn trong đề bài. Ví dụ: Vận dụng quy tắc đếm để giải quyết bài toán thực tiễn.,M3\n27854585,Áp dụng,\"Bản chất của hành vi là áp dụng trực tiếp, chỉ cần dùng duy nhất một bước. Thay đúng giá trị vào biểu thức, công thức, định lí đã có để tìm kết quả.  Ví dụ: Áp dụng công thức tính diện tích hình thoi, Áp dụng giá trị lượng giác của góc để tính A.\",M1\n27854605,Tạo ra/Đề xuất,\"Tạo ra một công thức, phương án, giải pháp mới dựa trên phân tích và dữ liệu có trong đề bài. Ví dụ: Tạo ra phép tính từ các số và dấu cho trước, Tạo ra hàm số\",M3\n27854578,Nhận ra/Nhận dạng,\"Sử dụng trong câu hỏi trắc nghiệm. Bản chất hành vi khi gán động từ này là khi cần nhận diện, nhận biết, phát hiện mối quan hệ từ một biểu thức, đồ thị, mô tả có sẵn. Không yêu cầu đưa ra giá trị cụ thể. Chỉ dùng khi học sinh cần chỉ ra thông tin rõ ràng, quen thuộc. Ví dụ: Nhận dạng được tứ giác qua hình vẽ, Nhận ra đồ thị của hàm số là một đường thẳng.\",M1\n27854589,Phân biệt/Phân loại,\"Dùng khi đề bài yêu cầu nhận biết, so sánh, chia nhóm, giải thích sự khác nhau giữa các đối tượng, nhóm, khái niệm. Chỉ ra được sự khác biệt quan trọng dựa trên đặc điểm, bản chất. Ví dụ: Phân biệt được miền biểu diễn chứa bờ hay không,\",M2\n27854582,Liệt kê,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854602,Khái quát,\"Rút ra tính chất tổng quát, quy luật, biểu thức hoặc kết luận có tính bao quát từ nhiều trường hợp cụ thể hoặc từ biểu thức tổng quát. Ví dụ: Khái quát được số hạng tổng quát của dãy số.\",M3\n27854599,Tổng hợp/Lập luận nhiều bước,Là chuỗi suy luận qua nhiều bước phức tạp để đi đến kết quả. Ví dụ: Lập luận nhiều bước để giải quyết bài toán thực tiễn.,M3\n27854580,Xác định/Tìm kiếm,\"Bản chất hành vi khi gán động từ xác định/tìm kiếm là dùng khi cần chỉ rõ, nêu cụ thể một giá trị, điểm, nghiệm, vị trí… từ một đề bài, tình huống đã cho. Ví dụ: Xác định điểm thuộc đường thẳng, điểm không thuộc đường thẳng. Ví dụ: Xác định vị trí của điểm A so với đường tròn, Xác định tọa độ 2 điểm thuộc đồ thị hàm số và viết phương trình, Xác định dấu kết quả của phép nhân, phép chia số nguyên...\",M1\n27854603,Phát hiện (vấn đề có tính mới),\"Ví dụ: Phát hiện được quy luật, điểm khác biệt…\",M3\n27854583,Phát biểu/Diễn đạt lại,\"Từ dữ liệu cho trước trong đề bài, để tìm ra đáp án đúng thì cần diễn đạt hoặc phát biểu lại theo cách khác với ý nghĩa tương đương.\",M1\n27854598,Phân tích,\"Phải có bước suy luận, xử lí các dữ liệu đã cho từ thao tác ban đầu và từ đó rút ra được kết luận để tìm kết quả. Ví dụ: Phân tích số liệu từ bảng biểu để nhận ra vấn đề hoặc quy luật đơn giản, Phân tích chuyển động của quả bóng dựa trên đồ thị và thông tin đã cho, từ đó tìm điểm thuộc đồ thị, viết phương trình của đồ thị.\",M3\n27854594,Kiểm chứng,Gán động từ này cho tất cả các câu hỏi khẳng định đúng sai ở mức M2,M2\n27854581,Mô tả,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854584,So sánh,\"Bản chất của hành vi là đối chiếu, tìm ra điểm giống – khác, lớn – bé giữa hai đối tượng. Ví dụ: So sánh hai số nguyên âm.\",M1\n27854591,Biến đổi/Khai triển,\"Thực hiện thao tác biến đổi hoặc khai triển biểu thức, toán tử, tập hợp để đơn giản hoá hoặc đưa về dạng cần thiết. Ví dụ: Khai triển biểu thức ${\\left( {x - 3} \\right)^4}$, Biến đổi các biểu thức đa thức để rút gọn.\",M2\n27854600,Đánh giá,\"Khi đề bài yêu cầu đánh giá một vấn đề nào đó. Ví dụ: Đánh giá giải pháp để tìm phương án tối ưu (đánh giá Min, Max của biểu thức)\",M3\n27854593,Ước lượng,\"Nhấn mạnh vào hành vi so sánh kết quả với khoảng đã cho. Dùng khi cần xác định khoảng phù hợp từ giá trị tính toán được, thường dùng trong các bài tập yêu cầu đo lường, tính gần đúng, chọn đáp án từ khoảng giá trị. Ví dụ: Xác định số lần vi khuẩn nhân đôi và nhân nhẩm ước lượng tổng số vi khuẩn.\",M2\n27854590,Sắp xếp,\"Để tìm ra kết quả cần thiết lập một thứ tự cụ thể cho nhiều đối tượng (từ 3 trở lên) theo tiêu chí từ trong đề bài như: giá trị, trình tự, ưu tiên… Ví dụ: Tính độ dài các vectơ và sắp xếp độ dài vectơ theo thứ tự tăng dần.\",M2\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1880,
+        600
+      ],
+      "id": "9c8f4770-886a-4908-a146-41861887dabf",
+      "name": "MC Động từ"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"[ Danh sách các mã động từ ]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        760
+      ],
+      "id": "844d94bf-e6c4-4dba-b90e-82d2144d25a4",
+      "name": "Structured Output Parser7"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -180,
+        1240
+      ],
+      "id": "1c33bea8-f57c-4bb0-b08c-3d3fd8e6503c",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\",\n\"difficulty\": \"1, 2, hoặc 3\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1660,
+        -520
+      ],
+      "id": "85d259c5-eedf-40c4-a4db-d70e2cece030",
+      "name": "Structured Output Parser8"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"[ Danh sách các mã động từ ]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2020,
+        -720
+      ],
+      "id": "0dc0d7d0-afae-40df-842e-edbe53031abd",
+      "name": "Structured Output Parser9"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Gán động từ cho câu hỏi sau:\n {{ $('Switch').item.json.item }}\nGợi ý: {{ $('SA solver').item.json.output.hint }}\nLời giải: {{ $('SA solver').item.json.output.solution }}\nMức: M{{ $json.output.difficulty }} \n\nTrả ra output dạng JSON:\n{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"Danh sách các mã động từ\", ví dụ: \"27854596,27854595\"\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "# Vai trò:\nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, nhiệm vụ của bạn là gán động từ phù hợp với câu hỏi.\n\n# Quy trình gán động từ:\nBước 1: Ưu tiên tìm và gán luôn các động từ xuất hiện trong gợi ý, lời giải, đề bài trùng với động từ thuộc Bảng danh mục động từ (trong file đính kèm). Nếu động từ đó không thuộc Danh mục động từ, hãy xét bản chất của câu hỏi và hành vi học sinh cần thực hiện để trả lời đúng. Từ đó đó lựa chọn động từ phù hợp trong Bảng danh mục động từ.\nBước 2: Xác định bản chất hành vi chính cần thực hiện giúp trả lời đúng câu hỏi. So khớp hành vi đó với động từ phù hợp trong Danh mục động từ.\nBước 3: Đối chiếu lại với độ khó (M1, M2, M3) đã gán, chọn động từ tương ứng có trong Danh mục động từ. Có thể gán 2 động từ ở M1 cho câu M2. Có thể gán 2 động từ của M1 và M2 cho câu M3.\nLưu ý: \n- Mỗi câu hỏi có thể được gán từ 1 đến 3 động từ, tùy thuộc vào những hành vi cần thực hiện để trả lời được câu hỏi.\n- Câu hỏi M2 dạng khẳng định đúng sai thì không được gán động từ Kiểm chứng. \n- Với những câu mà phải dùng nhiều hành vi, nhiều bước phức tạp khác nhau để làm bài có thể sử dụng động từ Lập luận nhiều bước, Áp dụng (quy trình nhiều bước).\n\n# Danh mục động từ:\nstudent_competency_iids,dong_tu,mo_ta,muc_do\n27854596,Biểu diễn,Ví dụ: Biểu diễn được miền nghiệm của bất phương trình bậc nhất hai ẩn trên mặt phẳng tọa độ.,M2\n27854595,Áp dụng (quy trình nhiều bước),\"Dùng khi phải thực hiện một chuỗi các thao tác khác nhau, liên quan đến phương pháp, các bước làm bài cần biến đổi phức tạp. Không dùng khi chỉ cần thực hiện nhiều phép tính tuần tự. Ví dụ: Áp dụng công thức tính giá trị trung bình và phương sai, Áp dụng phương pháp viết phương trình đường thẳng đi qua hai điểm cho trước.\",M2\n27854588,Lựa chọn,\"Dùng cho dạng câu trắc nghiệm, khi cần tư duy chọn phương án phù hợp, hợp lí nhất trong các tình huống tương tự hoặc có nhiều lựa chọn gần đúng. Yêu cầu lựa chọn thường xuất hiện trong đề bài. Ví dụ: “Để tìm tập hợp A∩B∪C, ta cần thực hiện các bước nào sau đây một cách hợp lí nhất?”\",M2\n27854604,Mở rộng/Liên hệ,Mở rộng/Liên hệ từ các kết quả thống kê để rút ra các kết luận có ý nghĩa.,M3\n27854601,Vận dụng,Nhận diện mô hình toán học từ ngữ cảnh thực tế và không được hỗ trợ trực tiếp bằng các công thức có sẵn trong đề bài. Ví dụ: Vận dụng quy tắc đếm để giải quyết bài toán thực tiễn.,M3\n27854585,Áp dụng,\"Bản chất của hành vi là áp dụng trực tiếp, chỉ cần dùng duy nhất một bước. Thay đúng giá trị vào biểu thức, công thức, định lí đã có để tìm kết quả.  Ví dụ: Áp dụng công thức tính diện tích hình thoi, Áp dụng giá trị lượng giác của góc để tính A.\",M1\n27854605,Tạo ra/Đề xuất,\"Tạo ra một công thức, phương án, giải pháp mới dựa trên phân tích và dữ liệu có trong đề bài. Ví dụ: Tạo ra phép tính từ các số và dấu cho trước, Tạo ra hàm số\",M3\n27854578,Nhận ra/Nhận dạng,\"Sử dụng trong câu hỏi trắc nghiệm. Bản chất hành vi khi gán động từ này là khi cần nhận diện, nhận biết, phát hiện mối quan hệ từ một biểu thức, đồ thị, mô tả có sẵn. Không yêu cầu đưa ra giá trị cụ thể. Chỉ dùng khi học sinh cần chỉ ra thông tin rõ ràng, quen thuộc. Ví dụ: Nhận dạng được tứ giác qua hình vẽ, Nhận ra đồ thị của hàm số là một đường thẳng.\",M1\n27854589,Phân biệt/Phân loại,\"Dùng khi đề bài yêu cầu nhận biết, so sánh, chia nhóm, giải thích sự khác nhau giữa các đối tượng, nhóm, khái niệm. Chỉ ra được sự khác biệt quan trọng dựa trên đặc điểm, bản chất. Ví dụ: Phân biệt được miền biểu diễn chứa bờ hay không,\",M2\n27854582,Liệt kê,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854602,Khái quát,\"Rút ra tính chất tổng quát, quy luật, biểu thức hoặc kết luận có tính bao quát từ nhiều trường hợp cụ thể hoặc từ biểu thức tổng quát. Ví dụ: Khái quát được số hạng tổng quát của dãy số.\",M3\n27854599,Tổng hợp/Lập luận nhiều bước,Là chuỗi suy luận qua nhiều bước phức tạp để đi đến kết quả. Ví dụ: Lập luận nhiều bước để giải quyết bài toán thực tiễn.,M3\n27854580,Xác định/Tìm kiếm,\"Bản chất hành vi khi gán động từ xác định/tìm kiếm là dùng khi cần chỉ rõ, nêu cụ thể một giá trị, điểm, nghiệm, vị trí… từ một đề bài, tình huống đã cho. Ví dụ: Xác định điểm thuộc đường thẳng, điểm không thuộc đường thẳng. Ví dụ: Xác định vị trí của điểm A so với đường tròn, Xác định tọa độ 2 điểm thuộc đồ thị hàm số và viết phương trình, Xác định dấu kết quả của phép nhân, phép chia số nguyên...\",M1\n27854603,Phát hiện (vấn đề có tính mới),\"Ví dụ: Phát hiện được quy luật, điểm khác biệt…\",M3\n27854583,Phát biểu/Diễn đạt lại,\"Từ dữ liệu cho trước trong đề bài, để tìm ra đáp án đúng thì cần diễn đạt hoặc phát biểu lại theo cách khác với ý nghĩa tương đương.\",M1\n27854598,Phân tích,\"Phải có bước suy luận, xử lí các dữ liệu đã cho từ thao tác ban đầu và từ đó rút ra được kết luận để tìm kết quả. Ví dụ: Phân tích số liệu từ bảng biểu để nhận ra vấn đề hoặc quy luật đơn giản, Phân tích chuyển động của quả bóng dựa trên đồ thị và thông tin đã cho, từ đó tìm điểm thuộc đồ thị, viết phương trình của đồ thị.\",M3\n27854594,Kiểm chứng,Gán động từ này cho tất cả các câu hỏi khẳng định đúng sai ở mức M2,M2\n27854581,Mô tả,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854584,So sánh,\"Bản chất của hành vi là đối chiếu, tìm ra điểm giống – khác, lớn – bé giữa hai đối tượng. Ví dụ: So sánh hai số nguyên âm.\",M1\n27854591,Biến đổi/Khai triển,\"Thực hiện thao tác biến đổi hoặc khai triển biểu thức, toán tử, tập hợp để đơn giản hoá hoặc đưa về dạng cần thiết. Ví dụ: Khai triển biểu thức ${\\left( {x - 3} \\right)^4}$, Biến đổi các biểu thức đa thức để rút gọn.\",M2\n27854600,Đánh giá,\"Khi đề bài yêu cầu đánh giá một vấn đề nào đó. Ví dụ: Đánh giá giải pháp để tìm phương án tối ưu (đánh giá Min, Max của biểu thức)\",M3\n27854593,Ước lượng,\"Nhấn mạnh vào hành vi so sánh kết quả với khoảng đã cho. Dùng khi cần xác định khoảng phù hợp từ giá trị tính toán được, thường dùng trong các bài tập yêu cầu đo lường, tính gần đúng, chọn đáp án từ khoảng giá trị. Ví dụ: Xác định số lần vi khuẩn nhân đôi và nhân nhẩm ước lượng tổng số vi khuẩn.\",M2\n27854590,Sắp xếp,\"Để tìm ra kết quả cần thiết lập một thứ tự cụ thể cho nhiều đối tượng (từ 3 trở lên) theo tiêu chí từ trong đề bài như: giá trị, trình tự, ưu tiên… Ví dụ: Tính độ dài các vectơ và sắp xếp độ dài vectơ theo thứ tự tăng dần.\",M2\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1820,
+        -920
+      ],
+      "id": "7a738413-4bf2-4639-8594-fccc716ac2ee",
+      "name": "SA Động từ"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Phân loại mức độ của bài tập sau:\n{{ $('Switch').item.json.item }}\n\nLời giải:\n{{ $json.output.solution }}\n\nCho biết, học sinh đã học kiến thức sau:\n{{ $('Join sources into 1').item.json.knowledge }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "1. BỐI CẢNH \nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, bạn muốn phân loại câu hỏi theo mức độ tư tuy.  \n2. CƠ SỞ \n- Câu hỏi có độ khó M1 (nhận biết) yêu cầu học sinh biết nhận biết, nhắc lại hoặc mô tả được nội dung đã học và áp dụng trực tiếp để giải quyết một số tình huống, vấn đề quen thuộc trong học tập.  \n- Câu hỏi có độ khó M2 (thông hiểu) yêu cầu học sinh biết kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề có nội dung tương tự. Các bài tập tính toán của M2 sẽ phải tính toán nhiều bước nhưng chỉ cần áp dụng công thức. \n- Câu hỏi có độ khó M3 (vận dụng) yêu cầu học sinh vận dụng các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và cuộc sống. Các bài tập tính toán của M3 sẽ phức tạp.   \n3. NHIỆM VỤ \nGán độ khó, động từ từ một đề bài đã có lời giải và gợi ý làm bài cho trước. \n- Bước 1: Phân tích, đánh giá đề bài và kiến thức lí thuyết. \n- Bước 2: Phân loại độ khó theo 3 mức M1, M2, M3.  \n\n4. KẾT QUẢ Kết quả dạng JSON: \n{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\", \n\"difficulty\": \"Mức độ ở dạng số, 1 cho M1, 2 cho M2, và 3 cho M3\" \n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1500,
+        -700
+      ],
+      "id": "ef67bb89-5231-47e3-8135-258f3514c759",
+      "name": "SA Mức"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\",\n\"difficulty\": \"1, 2, hoặc 3\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1800,
+        1940
+      ],
+      "id": "2f6bab11-13ac-4b8f-81c7-d71a996186ab",
+      "name": "Structured Output Parser10"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"[ Danh sách các mã động từ ]\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2120,
+        1820
+      ],
+      "id": "e798d412-6a52-4275-ba87-436a79d2526e",
+      "name": "Structured Output Parser11"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Phân loại mức độ của bài tập sau:\n{{ $('Switch').item.json.item }}\n\nLời giải:\n{{ $json.output.solution }}\n\nCho biết, học sinh đã học kiến thức sau:\n{{ $('Join sources into 1').item.json.knowledge }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "1. BỐI CẢNH \nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, bạn muốn phân loại câu hỏi theo mức độ tư tuy.  \n2. CƠ SỞ \n- Câu hỏi có độ khó M1 (nhận biết) yêu cầu học sinh biết nhận biết, nhắc lại hoặc mô tả được nội dung đã học và áp dụng trực tiếp để giải quyết một số tình huống, vấn đề quen thuộc trong học tập.  \n- Câu hỏi có độ khó M2 (thông hiểu) yêu cầu học sinh biết kết nối, sắp xếp được một số nội dung đã học để giải quyết vấn đề có nội dung tương tự. Các bài tập tính toán của M2 sẽ phải tính toán nhiều bước nhưng chỉ cần áp dụng công thức. \n- Câu hỏi có độ khó M3 (vận dụng) yêu cầu học sinh vận dụng các nội dung đã học để giải quyết một số vấn đề mới hoặc đưa ra những phản hồi hợp lí trong học tập và cuộc sống. Các bài tập tính toán của M3 sẽ phức tạp.   \n3. NHIỆM VỤ \nGán độ khó, động từ từ một đề bài đã có lời giải và gợi ý làm bài cho trước. \n- Bước 1: Phân tích, đánh giá đề bài và kiến thức lí thuyết. \n- Bước 2: Phân loại độ khó theo 3 mức M1, M2, M3.  \n\n4. KẾT QUẢ Kết quả dạng JSON: \n{\n\"muc_do_reasoning\": \"Diễn giải chi tiết tại sao lại ở mức độ này.\", \n\"difficulty\": \"Mức độ ở dạng số, 1 cho M1, 2 cho M2, và 3 cho M3\" \n}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1600,
+        1780
+      ],
+      "id": "e659e3e7-cedf-4fb9-a762-c296ea9e077a",
+      "name": "TF Mức"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Gán động từ cho câu hỏi sau:\n {{ $('Switch').item.json.item }}\nGợi ý: {{ $('TF solver').item.json.output.hint }}\nLời giải: {{ $('TF solver').item.json.output.solution }}\nMức: M{{ $json.output.difficulty }} \n\nTrả ra output dạng JSON:\n{\n\"dong_tu_reasoning\": \"Lí giải lí do chọn các động từ\",\n\"student_competency_iids\": \"Danh sách các mã động từ\", ví dụ: \"27854596,27854595\"\n}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "# Vai trò:\nBạn là một giáo viên môn Toán cấp trung học phổ thông, có chuyên môn tốt, nhiệm vụ của bạn là gán động từ phù hợp với câu hỏi.\n\n# Quy trình gán động từ:\nBước 1: Ưu tiên tìm và gán luôn các động từ xuất hiện trong gợi ý, lời giải, đề bài trùng với động từ thuộc Bảng danh mục động từ (trong file đính kèm). Nếu động từ đó không thuộc Danh mục động từ, hãy xét bản chất của câu hỏi và hành vi học sinh cần thực hiện để trả lời đúng. Từ đó đó lựa chọn động từ phù hợp trong Bảng danh mục động từ.\nBước 2: Xác định bản chất hành vi chính cần thực hiện giúp trả lời đúng câu hỏi. So khớp hành vi đó với động từ phù hợp trong Danh mục động từ.\nBước 3: Đối chiếu lại với độ khó (M1, M2, M3) đã gán, chọn động từ tương ứng có trong Danh mục động từ. Có thể gán 2 động từ ở M1 cho câu M2. Có thể gán 2 động từ của M1 và M2 cho câu M3.\nLưu ý: \n- Mỗi câu hỏi có thể được gán từ 1 đến 3 động từ, tùy thuộc vào những hành vi cần thực hiện để trả lời được câu hỏi.\n- Câu hỏi M2 dạng khẳng định đúng sai thì không được gán động từ Kiểm chứng. \n- Với những câu mà phải dùng nhiều hành vi, nhiều bước phức tạp khác nhau để làm bài có thể sử dụng động từ Lập luận nhiều bước, Áp dụng (quy trình nhiều bước).\n\n# Danh mục động từ:\nstudent_competency_iids,dong_tu,mo_ta,muc_do\n27854596,Biểu diễn,Ví dụ: Biểu diễn được miền nghiệm của bất phương trình bậc nhất hai ẩn trên mặt phẳng tọa độ.,M2\n27854595,Áp dụng (quy trình nhiều bước),\"Dùng khi phải thực hiện một chuỗi các thao tác khác nhau, liên quan đến phương pháp, các bước làm bài cần biến đổi phức tạp. Không dùng khi chỉ cần thực hiện nhiều phép tính tuần tự. Ví dụ: Áp dụng công thức tính giá trị trung bình và phương sai, Áp dụng phương pháp viết phương trình đường thẳng đi qua hai điểm cho trước.\",M2\n27854588,Lựa chọn,\"Dùng cho dạng câu trắc nghiệm, khi cần tư duy chọn phương án phù hợp, hợp lí nhất trong các tình huống tương tự hoặc có nhiều lựa chọn gần đúng. Yêu cầu lựa chọn thường xuất hiện trong đề bài. Ví dụ: “Để tìm tập hợp A∩B∪C, ta cần thực hiện các bước nào sau đây một cách hợp lí nhất?”\",M2\n27854604,Mở rộng/Liên hệ,Mở rộng/Liên hệ từ các kết quả thống kê để rút ra các kết luận có ý nghĩa.,M3\n27854601,Vận dụng,Nhận diện mô hình toán học từ ngữ cảnh thực tế và không được hỗ trợ trực tiếp bằng các công thức có sẵn trong đề bài. Ví dụ: Vận dụng quy tắc đếm để giải quyết bài toán thực tiễn.,M3\n27854585,Áp dụng,\"Bản chất của hành vi là áp dụng trực tiếp, chỉ cần dùng duy nhất một bước. Thay đúng giá trị vào biểu thức, công thức, định lí đã có để tìm kết quả.  Ví dụ: Áp dụng công thức tính diện tích hình thoi, Áp dụng giá trị lượng giác của góc để tính A.\",M1\n27854605,Tạo ra/Đề xuất,\"Tạo ra một công thức, phương án, giải pháp mới dựa trên phân tích và dữ liệu có trong đề bài. Ví dụ: Tạo ra phép tính từ các số và dấu cho trước, Tạo ra hàm số\",M3\n27854578,Nhận ra/Nhận dạng,\"Sử dụng trong câu hỏi trắc nghiệm. Bản chất hành vi khi gán động từ này là khi cần nhận diện, nhận biết, phát hiện mối quan hệ từ một biểu thức, đồ thị, mô tả có sẵn. Không yêu cầu đưa ra giá trị cụ thể. Chỉ dùng khi học sinh cần chỉ ra thông tin rõ ràng, quen thuộc. Ví dụ: Nhận dạng được tứ giác qua hình vẽ, Nhận ra đồ thị của hàm số là một đường thẳng.\",M1\n27854589,Phân biệt/Phân loại,\"Dùng khi đề bài yêu cầu nhận biết, so sánh, chia nhóm, giải thích sự khác nhau giữa các đối tượng, nhóm, khái niệm. Chỉ ra được sự khác biệt quan trọng dựa trên đặc điểm, bản chất. Ví dụ: Phân biệt được miền biểu diễn chứa bờ hay không,\",M2\n27854582,Liệt kê,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854602,Khái quát,\"Rút ra tính chất tổng quát, quy luật, biểu thức hoặc kết luận có tính bao quát từ nhiều trường hợp cụ thể hoặc từ biểu thức tổng quát. Ví dụ: Khái quát được số hạng tổng quát của dãy số.\",M3\n27854599,Tổng hợp/Lập luận nhiều bước,Là chuỗi suy luận qua nhiều bước phức tạp để đi đến kết quả. Ví dụ: Lập luận nhiều bước để giải quyết bài toán thực tiễn.,M3\n27854580,Xác định/Tìm kiếm,\"Bản chất hành vi khi gán động từ xác định/tìm kiếm là dùng khi cần chỉ rõ, nêu cụ thể một giá trị, điểm, nghiệm, vị trí… từ một đề bài, tình huống đã cho. Ví dụ: Xác định điểm thuộc đường thẳng, điểm không thuộc đường thẳng. Ví dụ: Xác định vị trí của điểm A so với đường tròn, Xác định tọa độ 2 điểm thuộc đồ thị hàm số và viết phương trình, Xác định dấu kết quả của phép nhân, phép chia số nguyên...\",M1\n27854603,Phát hiện (vấn đề có tính mới),\"Ví dụ: Phát hiện được quy luật, điểm khác biệt…\",M3\n27854583,Phát biểu/Diễn đạt lại,\"Từ dữ liệu cho trước trong đề bài, để tìm ra đáp án đúng thì cần diễn đạt hoặc phát biểu lại theo cách khác với ý nghĩa tương đương.\",M1\n27854598,Phân tích,\"Phải có bước suy luận, xử lí các dữ liệu đã cho từ thao tác ban đầu và từ đó rút ra được kết luận để tìm kết quả. Ví dụ: Phân tích số liệu từ bảng biểu để nhận ra vấn đề hoặc quy luật đơn giản, Phân tích chuyển động của quả bóng dựa trên đồ thị và thông tin đã cho, từ đó tìm điểm thuộc đồ thị, viết phương trình của đồ thị.\",M3\n27854594,Kiểm chứng,Gán động từ này cho tất cả các câu hỏi khẳng định đúng sai ở mức M2,M2\n27854581,Mô tả,\"Trọng tâm của hành vi làm bài nằm ở việc mô tả chính xác ý nghĩa của các khái niệm, đặc điểm (không phải là so sánh hay nhận ra, phân biệt giữa các lựa chọn). Ví dụ: Mô tả được những đặc điểm, tính chất của hình vuông.\",M1\n27854584,So sánh,\"Bản chất của hành vi là đối chiếu, tìm ra điểm giống – khác, lớn – bé giữa hai đối tượng. Ví dụ: So sánh hai số nguyên âm.\",M1\n27854591,Biến đổi/Khai triển,\"Thực hiện thao tác biến đổi hoặc khai triển biểu thức, toán tử, tập hợp để đơn giản hoá hoặc đưa về dạng cần thiết. Ví dụ: Khai triển biểu thức ${\\left( {x - 3} \\right)^4}$, Biến đổi các biểu thức đa thức để rút gọn.\",M2\n27854600,Đánh giá,\"Khi đề bài yêu cầu đánh giá một vấn đề nào đó. Ví dụ: Đánh giá giải pháp để tìm phương án tối ưu (đánh giá Min, Max của biểu thức)\",M3\n27854593,Ước lượng,\"Nhấn mạnh vào hành vi so sánh kết quả với khoảng đã cho. Dùng khi cần xác định khoảng phù hợp từ giá trị tính toán được, thường dùng trong các bài tập yêu cầu đo lường, tính gần đúng, chọn đáp án từ khoảng giá trị. Ví dụ: Xác định số lần vi khuẩn nhân đôi và nhân nhẩm ước lượng tổng số vi khuẩn.\",M2\n27854590,Sắp xếp,\"Để tìm ra kết quả cần thiết lập một thứ tự cụ thể cho nhiều đối tượng (từ 3 trở lên) theo tiêu chí từ trong đề bài như: giá trị, trình tự, ưu tiên… Ví dụ: Tính độ dài các vectơ và sắp xếp độ dài vectơ theo thứ tự tăng dần.\",M2\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        1940,
+        1660
+      ],
+      "id": "ed2b0015-c5b2-4639-8be3-06be7933327e",
+      "name": "TF Động từ"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Split items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "SA solver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "MC extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "MC solver",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TF extractor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TF solver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text": {
+      "main": [
+        [
+          {
+            "node": "Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC solver": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          },
+          {
+            "node": "MC Mức",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Question array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login Info": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Item Infor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "LMS MC parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser4": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SA extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "SA solver": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          },
+          {
+            "node": "SA Mức",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LMS SA parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Infor": {
+      "main": [
+        [
+          {
+            "node": "Split items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser5": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF extractor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser6": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF solver",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TF extractor": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "TF solver": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 2
+          },
+          {
+            "node": "TF Mức",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LMS TF parser": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "LMS SA parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "LMS MC parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "LMS TF parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question array": {
+      "main": [
+        [
+          {
+            "node": "Login Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Type classifier",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Task": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SA extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "TF extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reasoning model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "TF solver",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC solver",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SA solver",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC Mức",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "MC Động từ",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SA Mức",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SA Động từ",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "TF Mức",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "TF Động từ",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Knowledge Math 12",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Join sources into 1": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Type classifier": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC Mức",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Math 12": {
+      "main": [
+        [
+          {
+            "node": "Join sources into 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Math 12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC Mức": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "MC Động từ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MC Động từ": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser7": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "MC Động từ",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser8": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA Mức",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser9": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "SA Động từ",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SA Động từ": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SA Mức": {
+      "main": [
+        [
+          {
+            "node": "SA Động từ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser10": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF Mức",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser11": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "TF Động từ",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TF Mức": {
+      "main": [
+        [
+          {
+            "node": "TF Động từ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TF Động từ": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f56ab036-793d-4967-aaf8-868c8f2dd6e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "861cdce3c56afff549db6b3bcaa434d956ea7f52bf2bb2c15080b9f278a79c1f"
+  },
+  "id": "V8NNz5c0ZEf55iwU",
+  "tags": []
+}

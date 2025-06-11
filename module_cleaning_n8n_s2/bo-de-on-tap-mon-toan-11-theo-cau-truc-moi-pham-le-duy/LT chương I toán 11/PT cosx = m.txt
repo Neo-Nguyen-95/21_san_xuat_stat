@@ -1,0 +1,18 @@
+Phương trình $\cos x=m$
+
+Xét phương trình $\cos x=m$ :
+
+- Nếu $|m|>1$ thì phương trình $\cos x=m$ vô nghiệm vì $|\cos x| \leq 1$ với mọi $x \in \mathbb{R}$.
+- Nếu $|m| \leq 1$ thì phương trình $\cos x=m$ có nghiệm:
+
+Ta được $\cos x=m \Leftrightarrow \cos x=\cos \alpha \Leftrightarrow\left[\begin{array}{l}x=\alpha+k 2 \pi \\ x=-\alpha+k 2 \pi\end{array}(k \in \mathbb{Z})\right.$.
+Tồn tại duy nhất $\alpha \in[0 ; \pi]$ thỏa $\cos \alpha=m$.
+
+- $\cos x=\cos \alpha^{\circ} \Leftrightarrow\left[\begin{array}{l}x=\alpha^{\circ}+k 360^{\circ} \\ x=-\alpha^{\circ}+k 360^{\circ}\end{array}(k \in \mathbb{Z})\right.$, nếu $\alpha$ được đo bằng đon vị độ.
+- $\cos u=\cos v \Leftrightarrow\left[\begin{array}{l}u=v+k 2 \pi \\ u=-v+k 2 \pi\end{array}(k \in \mathbb{Z})\right.$, với $u=u(x) ; v=v(x)$ là các hàm số theo biến $x$.
+
+Các trường hợp đặc biệt:
+
+- $\cos x=1 \Leftrightarrow x=k 2 \pi(k \in \mathbb{Z})$.
+- $\cos x=-1 \Leftrightarrow x=\pi+k 2 \pi(k \in \mathbb{Z})$.
+- $\cos x=0 \Leftrightarrow x=\frac{\pi}{2}+k \pi(k \in \mathbb{Z})$.

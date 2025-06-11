@@ -1,0 +1,22 @@
+2. Hàm số chẵn, hàm số lẻ, hàm số tuần hoàn
+
+2.1. Hàm số chẵn, hàm số lẻ
+
+Ta có định nghĩa sau:
+Hàm số $y=f(x)$ với tập xác định $D$ được gọi là hàm số chẵn nếu với mọi $x \in D$ ta có $-x \in D$ và $f(-x)=f(x)$.
+Hàm số $y=f(x)$ với tập xác định $D$ được gọi là hàm số lẻ nếu với mọi $x \in D$ ta có $-x \in D$ và $f(-x)=-f(x)$.
+
+- Đồ thị của hàm số chẵn nhận trục tung làm trục đối xứng.
+- Đồ thị của hàm số lẻ nhận gốc toạ độ làm tâm đối xứng.
+
+2.2. Hàm số tuần hoàn
+
+Hàm số $y=f(x)$ với tập xác định $D$ được gọi là hàm số tuần hoàn nếu tồn tại một số $T$ khác 0 sao cho với mọi $x \in D$ ta có $x \pm T \in D$ và $f(x+T)=f(x)$.
+Số $T$ dương nhỏ nhất thoả mãn các điều kiện trên (nếu có) được gọi là chu kì của hàm số tuần hoàn $y=f(x)$.
+
+Đồ thị của hàm số tuần hoàn chu kì $T$ được lặp lại trên từng đoạn giá trị của $x$ có độ dài $T$.
+
+Người ta chứng minh được rằng:
+
+- Các hàm số $y=\sin x$ và $y=\cos x$ là các hàm số tuần hoàn với chu kì $2 \pi$;
+- Các hàm số $y=\tan x$ và $y=\cot x$ là các hàm số tuần hoàn với chu kì $\pi$.

@@ -1,0 +1,12 @@
+Hàm số $\mathrm{y}=\cot \mathrm{x}$
+
+Trong mặt phẳng toạ độ $O x y$, lấy nhiều điểm $M(x ; \cot x)$ với $x \in(0 ; \pi)$ và nối lại, ta được đồ thị của hàm số $y=\cot x$ trên khoảng $(0 ; \pi)$ như phần đồ thị tô màu trong hình dưới đây.
+Vì hàm số $y=\cot x$ tuần hoàn với chu kì $\pi$ nên để vẽ đồ thị của hàm số $y=\cot x$ trên $\mathbb{R} \backslash\{k \pi \mid k \in \mathbb{Z}\}$ ta vẽ đồ thị của hàm số trên khoảng $(0 ; \pi)$, sau đó lặp lại đồ thị trên đoạn này trên từng đoạn giá trị của $x$ có độ dài $\pi$. 
+Ta có đồ thị của hàm số $y=\cot x$ trên $\mathbb{R} \backslash\{k \pi \mid k \in \mathbb{Z}\}$ như sau
+
+Vì $y=\cot x$ là hàm số lẻ nên để vẽ đồ thị của nó trên khoảng $(0 ; \pi)$, ta có thể vẽ trên nửa khoảng $\left(0 ; \frac{\pi}{2}\right]$, sau đó lấy đối xứng qua gốc toạ độ.
+Từ đồ thị trên, ta thấy hàm số $y=\cot x$ có tập xác định là $\mathbb{R} \backslash\{k \pi \mid k \in \mathbb{Z}\}$, tập giá trị là $\mathbb{R}$ và có các tính chất sau:
+
+- Hàm số tuần hoàn với chu kì $\pi$.
+- Hàm số lẻ, có đồ thị đối xứng qua gốc toạ độ $O$.
+- Hàm số đồng biến trên các khoảng $\left(-\frac{\pi}{2}+k \pi ; \frac{\pi}{2}+k \pi\right)(k \in \mathbb{Z})$.

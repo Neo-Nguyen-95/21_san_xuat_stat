@@ -1,0 +1,57 @@
+4. Quan hệ giữa các giá trị lượng giác
+
+4.1. Hệ thức cơ bản
+
+(1) $\sin ^{2} \alpha+\cos ^{2} \alpha=1$.
+(2) $1+\tan ^{2} \alpha=\frac{1}{\cos ^{2} \alpha}\left(\alpha \neq \frac{\pi}{2}+k \pi, k \in \mathbb{Z}\right)$.
+(3) $1+\cot ^{2} \alpha=\frac{1}{\sin ^{2} \alpha}(\alpha \neq k \pi, k \in \mathbb{Z})$.
+(4) $\tan \alpha \cdot \cot \alpha=1\left(\alpha \neq \frac{k \pi}{2}, k \in \mathbb{Z}\right)$.
+
+4.2. Giá trị lượng giác của các góc có liên quan đặc biệt
+
+- Góc đối nhau ( $\alpha$ và $-\alpha$ )
+
+$$
+\begin{aligned}
+& \cos (-\alpha)=\cos \alpha ; \\
+& \sin (-\alpha)=-\sin \alpha ; \\
+& \tan (-\alpha)=-\tan \alpha ; \\
+& \cot (-\alpha)=-\cot \alpha .
+\end{aligned}
+$$
+
+- Góc bù nhau ( $\alpha$ và $\pi-\alpha$ )
+
+$$
+\begin{aligned}
+& \sin (\pi-\alpha)=\sin \alpha ; \\
+& \cos (\pi-\alpha)=-\cos \alpha ; \\
+& \tan (\pi-\alpha)=-\tan \alpha ; \\
+& \cot (\pi-\alpha)=-\cot \alpha .
+\end{aligned}
+$$
+
+- Góc phụ nhau $\left(\alpha\right.$ và $\left.\frac{\pi}{2}-\alpha\right)$
+
+$$
+\begin{aligned}
+& \sin \left(\frac{\pi}{2}-\alpha\right)=\cos \alpha \\
+& \cos \left(\frac{\pi}{2}-\alpha\right)=\sin \alpha \\
+& \tan \left(\frac{\pi}{2}-\alpha\right)=\cot \alpha \\
+& \cot \left(\frac{\pi}{2}-\alpha\right)=\tan \alpha
+\end{aligned}
+$$
+
+- Góc hơn kém $\pi$ ( $\alpha$ và $\pi+\alpha$ )
+
+$$
+\begin{aligned}
+& \sin (\pi+\alpha)=-\sin \alpha ; \\
+& \cos (\pi+\alpha)=-\cos \alpha ; \\
+& \tan (\pi+\alpha)=\tan \alpha ; \\
+& \cot (\pi+\alpha)=\cot \alpha .
+\end{aligned}
+$$
+
+Ta có thể nhớ giá trị lượng giác của các góc có liên quan đặc biệt bằng câu sau:
+"Đối cos, bù sin, phụ chéo, hơn kém $\pi$ tang".
