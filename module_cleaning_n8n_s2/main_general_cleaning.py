@@ -84,8 +84,11 @@ def clean(file_path):
             f.write(text_corrected_math)
 
 #%%
-folder_path = 'bo-de-on-tap-mon-toan-11-theo-cau-truc-moi-pham-le-duy/LT chương I toán 11/'
-file_list = [os.path.join(folder_path, file_name) for file_name in os.listdir(folder_path)]
+folder_path = 'bo-de-on-tap-mon-toan-11-theo-cau-truc-moi-pham-le-duy'
+file_list = [
+    os.path.join(folder_path, file_name) 
+    for file_name in os.listdir(folder_path) if '.md' in file_name
+             ]
 
 for file in file_list:
     clean(file)

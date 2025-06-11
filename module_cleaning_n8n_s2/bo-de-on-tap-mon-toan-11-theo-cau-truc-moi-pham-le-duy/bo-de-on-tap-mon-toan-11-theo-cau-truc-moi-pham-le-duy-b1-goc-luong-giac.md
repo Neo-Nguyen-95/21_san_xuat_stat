@@ -188,7 +188,7 @@ b) $-\dfrac{\pi}{360} rad=-0,5^{\circ}$.
 c) $\dfrac{31 \pi}{2} rad=27^{\circ}$.
 d) $-4 rad \approx-229,18^{\circ}$.
 
-## Câu 2.
+ Câu 2.
 
 Biểu diễn góc lượng giác trên đường tròn lượng giác. Các mệnh đề sau ĐÚNG hay SAI?
 a) $36^{\circ}+k 360^{\circ}, k \in \mathbb{Z}$ là điểm $M$ thuộc góc phần tư thứ $I I$.
@@ -202,7 +202,7 @@ b) $1127^{\circ},-674$.
 c) $\dfrac{61 \pi}{5},-\dfrac{19 \pi}{5}$.
 d) $\dfrac{61 \pi}{5},-\dfrac{23 \pi}{4}$.
 
-## Câu 4.
+ Câu 4.
 
 Trong hình vẽ bên, ta xem hình ảnh đường tròn trên một bánh lái tàu thuỷ tương ứng với một đường tròn lượng giác. Các mệnh đề sau ĐÚNG hay SAI?
 a) Công thức tổng quát biểu diễn góc lượng giác $(O A, O B)$ theo đơn vị radian: $(O A, O B)=\dfrac{\pi}{4}+$ $k 2 \pi(k \in \mathbb{Z})$.
@@ -214,18 +214,18 @@ d) Công thức tổng quát biểu diễn góc lượng giác $(O A, O C)+(O C,
 2. (a) Đ (b) S (c) Đ (d) S
 
 
-## Bài 7.
+ Bài 7.
 
 Một cái đồng hồ treo tường có đường kính bằng 60 cm, ta xem vành ngoài chiếc đồng hồ là một đường tròn với các điểm $A, B, C$ lần lượt tương ứng với vị trí các số $2,9,4$. Tính độ dài các cung nhỏ $A C$ (kết quả tính theo đơn vị centimét và làm tròn đến hàng phần chục).
 
 
-## Bài 8.
+ Bài 8.
 
 Một chiếc đồng hồ có kim giờ và kim phút được cho như trong hình vẽ sau. Xét tia $O u$ là kim giờ, $O v$ là kim phút. Xét chiều quay của góc là chiều kim đồng hồ. Số góc lượng giác $(O u, O v)$ là (với $k=0$ và số đo tính bằng độ)?!
 
 
 
-## Bài 9.
+ Bài 9.
 
 Cho hình vuông $A B C D$ có tâm $O$ và một trục $(i)$ đi qua $O$. Xác định số đo góc giữa tia $O A$ với trục ($i$) biết trục ($i$) đi qua trung điểm I của cạnh $A B$.!
 
