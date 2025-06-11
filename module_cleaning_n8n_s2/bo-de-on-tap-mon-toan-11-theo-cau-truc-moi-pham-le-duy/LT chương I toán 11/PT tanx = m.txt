@@ -1,10 +1,10 @@
-Phương trình $\tan \mathrm{x}=\mathrm{m}$
+Phương trình $\tan x=m$
 
 - Phương trình $\tan x=m$ có nghiệm với mọi $m$.
-- Với mọi $m \in \mathbb{R}$, tồn tại duy nhất $\alpha \in\left(-\frac{\pi}{2} ; \frac{\pi}{2}\right)$ thỏa mãn $\tan \alpha=m$.
+- Với mọi $m \in \mathbb{R}$, tồn tại duy nhất $\alpha \in\left(-\dfrac{\pi}{2}; \dfrac{\pi}{2}\right)$ thỏa mãn $\tan \alpha=m$.
 
 Khi đó: $\tan x=m \Leftrightarrow \tan x=\tan \alpha \Leftrightarrow x=\alpha+k \pi,(k \in \mathbb{Z})$.
 
 Nếu số đo của góc $\alpha$ được đo bằng đơn vị độ thì $\tan x=\tan \alpha^{\circ} \Leftrightarrow x=\alpha^{\circ}+k 180^{\circ},(k \in \mathbb{Z})$.
 Tổng quát, $\tan f(x)=\tan g(x) \Leftrightarrow f(x)=g(x)+k \pi,(k \in \mathbb{Z})$.
-Điều kiện: $\left\{\begin{array}{l}f(x) \neq \frac{\pi}{2}+k \pi \\ g(x) \neq \frac{\pi}{2}+l \pi\end{array}(k, l \in \mathbb{Z})\right.$.
+Điều kiện: $\left\{\begin{array}{l}f(x) \neq \dfrac{\pi}{2}+k \pi \\ g(x) \neq \dfrac{\pi}{2}+l \pi\end{array}(k, l \in \mathbb{Z})\right.$.

@@ -2,33 +2,32 @@
 
 3.1. Đường tròn lượng giác
 
-- Đường tròn lượng giác là đường tròn có tâm tại gốc toạ độ, bán kính bằng 1 , được định hướng và lấy điểm $A(1 ; 0)$ làm điểm gốc của đường tròn.
-- Điểm trên đường tròn lượng giác biểu diễn góc lượng giác có số đo $\alpha$ (độ hoặc rađian) là điểm $M$ trên đường tròn lượng giác sao cho $\mathrm{sd}(O A, O M)=\alpha$.
+- Đường tròn lượng giác là đường tròn có tâm tại gốc toạ độ, bán kính bằng 1, được định hướng và lấy điểm $A(1; 0)$ làm điểm gốc của đường tròn.
+- Điểm trên đường tròn lượng giác biểu diễn góc lượng giác có số đo $\alpha$ (độ hoặc rađian) là điểm $M$ trên đường tròn lượng giác sao cho $sd(O A, O M)=\alpha$.
 
 
 3.2. Giá trị lượng giác của góc lượng giác
 
-- $\cos \alpha=x$ (hoành độ của điểm $M$ ).
-- $\sin \alpha=y$ (tung độ của điểm $M$ ).
-- $\tan \alpha=\frac{\sin \alpha}{\cos \alpha}=\frac{y}{x}(x \neq 0)$.
-- $\cot \alpha=\frac{\cos \alpha}{\sin \alpha}=\frac{x}{y}(y \neq 0)$.
-(https://cdn.mathpix.com/cropped/2025_06_10_c92afa536976ca6c5197g-4.jpg?height=415&width=450&top_left_y=1683&top_left_x=997)
+- $\cos \alpha=x$ (hoành độ của điểm $M$).
+- $\sin \alpha=y$ (tung độ của điểm $M$).
+- $\tan \alpha=\dfrac{\sin \alpha}{\cos \alpha}=\dfrac{y}{x}(x \neq 0)$.
+- $\cot \alpha=\dfrac{\cos \alpha}{\sin \alpha}=\dfrac{x}{y}(y \neq 0)$.
 
 Ta còn gọi trục tung là trục sin, trục hoành là trục côsin.
 
-- $\sin \alpha, \cos \alpha$ xác định với mọi giá trị của $\alpha$ và ta có: $-1 \leq \sin \alpha \leq 1 ;-1 \leq \cos \alpha \leq 1$;
+- $\sin \alpha, \cos \alpha$ xác định với mọi giá trị của $\alpha$ và ta có: $-1 \leq \sin \alpha \leq 1;-1 \leq \cos \alpha \leq 1$;
 
-$$
-\sin (\alpha+k 2 \pi)=\sin \alpha ; \cos (\alpha+k 2 \pi)=\cos \alpha(k \in \mathbb{Z}) .
-$$
+$
+\sin (\alpha+k 2 \pi)=\sin \alpha; \cos (\alpha+k 2 \pi)=\cos \alpha(k \in \mathbb{Z}).
+$
 
-- $\tan \alpha$ xác định khi $\alpha \neq \frac{\pi}{2}+k \pi(k \in \mathbb{Z})$.
+- $\tan \alpha$ xác định khi $\alpha \neq \dfrac{\pi}{2}+k \pi(k \in \mathbb{Z})$.
 - $\cot \alpha$ xác định khi $\alpha \neq k \pi(k \in \mathbb{Z})$.
  
 Dấu của các giá trị lượng giác của một góc lượng giác phụ thuộc vào vị trí điểm biểu diễn $M$ trên đường tròn lượng giác.
 
-| Góc phần tư <br> Giá trị lượng giác | I | II | III | IV |
-| :--- | :--- | :--- | :--- | :--- |
+| Góc phần tư Giá trị lượng giác | I | II | III | IV |
+|:--- |:--- |:--- |:--- |:--- |
 | $\cos \alpha$ | $+$ | - | - | + |
 | $\sin \alpha$ | $+$ | $+$ | - | - |
 | $\cot \alpha$ | $+$ | - | $+$ | - |
@@ -36,10 +35,10 @@ Dấu của các giá trị lượng giác của một góc lượng giác phụ
 
 Giá trị lượng giác của các góc đặc biệt
 
-| Góc $\alpha$ | 0 | $\frac{\pi}{6}$ | $\frac{\pi}{4}$ | $\frac{\pi}{3}$ | $\frac{\pi}{2}$ |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-|  | $0^{\circ}$ | $30^{\circ}$ | $45^{\circ}$ | $60^{\circ}$ | $90^{\circ}$ |
-| $\sin \alpha$ | 0 | $\frac{1}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{\sqrt{3}}{2}$ | 1 |
-| $\cos \alpha$ | 1 | $\frac{\sqrt{3}}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{1}{2}$ | 0 |
-| $\tan \alpha$ | 0 | $\frac{\sqrt{3}}{3}$ | 1 | $\sqrt{3}$ | Không xác định |
-| $\cot \alpha$ | Không xác định | $\sqrt{3}$ | 1 | $\frac{\sqrt{3}}{3}$ | 0 |
+| Góc $\alpha$ | 0 | $\dfrac{\pi}{6}$ | $\dfrac{\pi}{4}$ | $\dfrac{\pi}{3}$ | $\dfrac{\pi}{2}$ |
+|:--- |:--- |:--- |:--- |:--- |:--- |
+| | $0^{\circ}$ | $30^{\circ}$ | $45^{\circ}$ | $60^{\circ}$ | $90^{\circ}$ |
+| $\sin \alpha$ | 0 | $\dfrac{1}{2}$ | $\dfrac{\sqrt{2}}{2}$ | $\dfrac{\sqrt{3}}{2}$ | 1 |
+| $\cos \alpha$ | 1 | $\dfrac{\sqrt{3}}{2}$ | $\dfrac{\sqrt{2}}{2}$ | $\dfrac{1}{2}$ | 0 |
+| $\tan \alpha$ | 0 | $\dfrac{\sqrt{3}}{3}$ | 1 | $\sqrt{3}$ | Không xác định |
+| $\cot \alpha$ | Không xác định | $\sqrt{3}$ | 1 | $\dfrac{\sqrt{3}}{3}$ | 0 |

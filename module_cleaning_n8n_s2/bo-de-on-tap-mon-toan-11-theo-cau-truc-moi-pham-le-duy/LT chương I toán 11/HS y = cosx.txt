@@ -1,13 +1,13 @@
-Hàm số $\mathrm{y}=\cos \mathrm{x}$
+Hàm số $y=\cos x$
 
-Trong mặt phẳng toạ độ $O x y$, lấy nhiều điểm $M(x ; \cos x)$ với $x \in[-\pi ; \pi]$ và nối lại, ta được đồ thị của hàm số $y=\cos x$ trên đoạn $[-\pi ; \pi]$ như phần đồ thị tô màu trong hình dưới đây.
-Vì hàm số $y=\cos x$ tuần hoàn với chu kì $2 \pi$ nên để vẽ đồ thị của hàm số $y=\cos x$ trên $\mathbb{R}$, ta vẽ đồ thị của hàm số trên đoạn $[-\pi ; \pi]$, sau đó lặp lại đồ thị trên đoạn này trên từng đoạn giá trị của $x$ có độ dài $2 \pi$.
+Trong mặt phẳng toạ độ $O x y$, lấy nhiều điểm $M(x; \cos x)$ với $x \in[-\pi; \pi]$ và nối lại, ta được đồ thị của hàm số $y=\cos x$ trên đoạn $[-\pi; \pi]$ như phần đồ thị tô màu trong hình dưới đây.
+Vì hàm số $y=\cos x$ tuần hoàn với chu kì $2 \pi$ nên để vẽ đồ thị của hàm số $y=\cos x$ trên $\mathbb{R}$, ta vẽ đồ thị của hàm số trên đoạn $[-\pi; \pi]$, sau đó lặp lại đồ thị trên đoạn này trên từng đoạn giá trị của $x$ có độ dài $2 \pi$.
 
-Vì $y=\cos x$ là hàm số chẵn nên để vẽ đồ thị của nó trên đoạn $[-\pi ; \pi]$, ta có thể vẽ trên đoạn $[0 ; \pi]$, sau đó lấy đối xứng qua trục tung.
+Vì $y=\cos x$ là hàm số chẵn nên để vẽ đồ thị của nó trên đoạn $[-\pi; \pi]$, ta có thể vẽ trên đoạn $[0; \pi]$, sau đó lấy đối xứng qua trục tung.
 
-Từ đồ thị trên, ta thấy hàm số $y=\cos x$ có tập xác định là $\mathbb{R}$, tập giá trị là $[-1 ; 1]$ và có các tính chất sau:
+Từ đồ thị trên, ta thấy hàm số $y=\cos x$ có tập xác định là $\mathbb{R}$, tập giá trị là $[-1; 1]$ và có các tính chất sau:
 
 - Hàm số tuần hoàn với chu kì $2 \pi$.
 - Hàm số chẵn, có đồ thị đối xứng qua trục $Oy$.
-- Hàm số đồng biến trên các khoảng $(-\pi+k 2 \pi ; k 2 \pi)(k \in \mathbb{Z})$ và nghịch biến trên các khoảng $(k 2 \pi ; \pi+k 2 \pi)(k \in \mathbb{Z})$.
-Tương tự hàm $\sin$, hàm số $y=a \cos (\omega x+b)+c,(a, b, c, \omega \in \mathbb{R}, a \omega \neq 0)$ cũng là một hàm tuần hoàn với chu kì cơ sở $\frac{2 \pi}{|\omega|}$.
+- Hàm số đồng biến trên các khoảng $(-\pi+k 2 \pi; k 2 \pi)(k \in \mathbb{Z})$ và nghịch biến trên các khoảng $(k 2 \pi; \pi+k 2 \pi)(k \in \mathbb{Z})$.
+Tương tự hàm $\sin$, hàm số $y=a \cos (\omega x+b)+c,(a, b, c, \omega \in \mathbb{R}, a \omega \neq 0)$ cũng là một hàm tuần hoàn với chu kì cơ sở $\dfrac{2 \pi}{|\omega|}$.

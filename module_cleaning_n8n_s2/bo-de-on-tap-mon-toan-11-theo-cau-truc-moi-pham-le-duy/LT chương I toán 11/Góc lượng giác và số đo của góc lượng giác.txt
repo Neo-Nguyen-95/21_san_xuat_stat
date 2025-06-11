@@ -1,6 +1,6 @@
 2. Góc lượng giác và số đo của góc lượng giác
 
-Trong mặt phẳng, cho hai tia $\mathrm{Ou}, \mathrm{Ov}$. Xét tia Om cùng nằm trong mặt phẳng này. Nếu tia $O m$ quay quanh điểm $O$, theo một chiều nhất định từ $O u$ đến $O v$, thì ta nói nó quét một góc lượng giác với tia đầu $O u$, tia cuối $O v$ và kí hiệu là $(O u, O v)$.
+Trong mặt phẳng, cho hai tia $Ou, Ov$. Xét tia Om cùng nằm trong mặt phẳng này. Nếu tia $O m$ quay quanh điểm $O$, theo một chiều nhất định từ $O u$ đến $O v$, thì ta nói nó quét một góc lượng giác với tia đầu $O u$, tia cuối $O v$ và kí hiệu là $(O u, O v)$.
 
 Góc lượng giác $(O u, O v)$ chỉ được xác định khi ta biết được chuyển động quay của tia $O m$ từ tia đầu $O u$ đến tia cuối $O v$.
 Ta quy ước:
@@ -8,8 +8,8 @@ Ta quy ước:
 - Chiều quay ngược với chiều quay của kim đồng hồ là chiều dương.
 - Chiều quay cùng chiều kim đồng hồ là chiều âm.
 
-Khi tia $O m$ quay góc $a^{\circ}$ thì góc lượng giác mà tia đó quét nên có số đo $a^{\circ}$ (hay $\frac{\pi a}{180} \mathrm{rad}$ ).
-Vì thế, mỗi một góc lượng giác đều có một số đo, đơn vị đo góc lượng giác là độ hoặc radian. Nếu góc lượng giác $(O u, O v)$ có số đo bằng $\alpha$ thì ta kí hiệu là $\mathrm{sd}(O u, O v)=\alpha$ hoặc $(O u, O v)=\alpha$.
+Khi tia $O m$ quay góc $a^{\circ}$ thì góc lượng giác mà tia đó quét nên có số đo $a^{\circ}$ (hay $\dfrac{\pi a}{180} rad$).
+Vì thế, mỗi một góc lượng giác đều có một số đo, đơn vị đo góc lượng giác là độ hoặc radian. Nếu góc lượng giác $(O u, O v)$ có số đo bằng $\alpha$ thì ta kí hiệu là $sd(O u, O v)=\alpha$ hoặc $(O u, O v)=\alpha$.
 
 Mỗi góc lượng giác gốc $O$ được xác định bởi tia đầu $O u$, tia cuối $O v$ và số đo của nó.
 
@@ -17,27 +17,27 @@ Cho hai tia $O u, O v$ thì có vô số góc lượng giác tia đầu $O u$, t
 Cho hai góc lượng giác $(O u, O v),\left(O^{\prime} u^{\prime}, O^{\prime} v^{\prime}\right)$ có tia đầu trùng nhau $\left(O u \equiv O^{\prime} u^{\prime}\right)$, tia cuối trùng nhau $\left(O v \equiv O^{\prime} v^{\prime}\right)$.
 Khi đó, nếu sử dụng đơn vị đo là độ thì ta có:
 
-$$
+$
 (O u, O v)=\left(O^{\prime} u^{\prime}, O^{\prime} v^{\prime}\right)+k 360^{\circ} \text { với } k \text { là số nguyên. }
-$$
+$
 
 Nếu sử dụng đơn vị đo là rađian thì công thức trên có thể viết như sau:
 $(O u, O v)=\left(O^{\prime} u^{\prime}, O^{\prime} v^{\prime}\right)+k 2 \pi$ với $k$ là số nguyên.
 
 
-Hệ thức Chasles ( Sa - lơ)
+Hệ thức Chasles (Sa - lơ)
 
-Với ba tia $\mathrm{Ou}, \mathrm{Ov}, \mathrm{Ow}$ bất kì, ta có:
+Với ba tia $Ou, Ov, Ow$ bất kì, ta có:
 
-1. $\mathrm{sd}(\mathrm{Ou}, \mathrm{Ov})+\mathrm{sd}(\mathrm{Ov}, \mathrm{Ow})=\mathrm{sd}(\mathrm{Ou}, \mathrm{Ow})+k 360^{\circ}(k \in \mathbb{Z})$.
-2. $\mathrm{sd}(\mathrm{Ov}, \mathrm{Ow})=\mathrm{sd}(\mathrm{Ou}, \mathrm{Ow})-\mathrm{sd}(\mathrm{Ou}, \mathrm{Ov})+k^{\prime} 360^{\circ}\left(k^{\prime} \in \mathbb{Z}\right)$.
+1. $sd(Ou, Ov)+sd(Ov, Ow)=sd(Ou, Ow)+k 360^{\circ}(k \in \mathbb{Z})$.
+2. $sd(Ov, Ow)=sd(Ou, Ow)-sd(Ou, Ov)+k^{\prime} 360^{\circ}\left(k^{\prime} \in \mathbb{Z}\right)$.
 
-## REMARK 4 Từ hệ thức Chasles, ta suy ra:
+ REMARK 4 Từ hệ thức Chasles, ta suy ra:
 
 Với ba tia tùy ý $O x, O u, O v$ ta có:
 
-$$
-\mathrm{sd}(\mathrm{Ou}, \mathrm{Ov})=\mathrm{sd}(\mathrm{Ox}, \mathrm{Ov})-\mathrm{sd}(\mathrm{Ox}, \mathrm{Ou})+k 360^{\circ}(k \in \mathbb{Z}) .
-$$
+$
+sd(Ou, Ov)=sd(Ox, Ov)-sd(Ox, Ou)+k 360^{\circ}(k \in \mathbb{Z}).
+$
 
 Hệ thức này đóng vai trò quan trọng trong việc tính toán số đo của góc lượng giác.
