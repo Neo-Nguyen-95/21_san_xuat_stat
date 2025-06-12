@@ -96,24 +96,6 @@ b) $\sin 3 x+\sin 2 x=2 \sin 2 x \cos \dfrac{x}{2}$.
 c) $\cos 4 x-\cos x=-2 \sin \dfrac{5 x}{2} \sin \dfrac{3 x}{2}$.
 d) $\sin 5 x-\sin x=2 \cos 3 x \sin 2 x$.
 
-1. (a) Đ
-(b) $Đ$
-(c)
-(d) S
-2. 
-
-(a) Đ (b)
-(c)
-(d) $Đ$
-3.
-(a) $\boldsymbol{Đ}$ (b)
-(c)
-Đ (d) Đ
-4. (a) S
-(b) S
-(c) $Đ$
-(d) $Đ$
-
 
 
 Câu 1. Cho $\sin \alpha=\dfrac{3}{5}$ và $\left(90^{\circ}<\alpha<180^{\circ}\right)$. Tính $\cos \alpha$. 
